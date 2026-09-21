@@ -26,6 +26,7 @@ stats_counter = {
     'active_mode': 'normal' # 'normal', 'beacon', 'attack'
 }
 
+defense_engine = "ai"  # "ai" (Random Forest 57 feats) or "legacy" (Traditional Rule-based Firewall)
 last_attack_time = 0
 last_beacon_time = 0
 
@@ -119,30 +120,51 @@ def classify_network_flow(src_ip, dst_ip, port, duration_us, fwd_pkts, bwd_pkts,
     idle_s = round(idle_us / 1e6, 2)
     duration_ms = round(duration_us / 1000, 2)
 
-    global stats_counter, last_attack_time, last_beacon_time
+    global stats_counter, last_attack_time, last_beacon_time, defense_engine
     now_t = time.time()
 
     if flow_type_hint == 'attack':
-        tag = "BOTNET ATTACK (SCAN/FLOOD)"
-        color = "red"
         last_attack_time = now_t
         stats_counter['attack_in_progress'] = True
         stats_counter['current_threat_level'] = 'CRITICAL'
         stats_counter['botnet_flows'] += 1
         confidence = max(confidence, 92.5)
-        explanation = f"Bão gói SYN quét cổng dồn dập (SYN={syn_count}, Chu kỳ siêu nhanh 40ms, Thời lượng {duration_ms}ms). AI xác định đây là hành vi trinh sát Botnet nguy hiểm."
-        add_log("GATEWAY-AI", "ALERT-RED", f"PHÁT HIỆN TẤN CÔNG BOTNET từ {src_ip} -> Cổng {port} (Độ tin cậy: {confidence}%)", "red")
+        
+        if defense_engine == 'legacy':
+            tag = "TẤN CÔNG (NGHẼN MẠNG BÃO GÓI)"
+            color = "red"
+            explanation = f"Tường lửa cũ chỉ gióng chuông khi bão gói SYN dồn dập làm tràn băng thông mạng ({duration_ms}ms). Nhưng lúc này hệ thống đã bị tấn công bùng phát!"
+            add_log("TƯỜNG LỬA CŨ", "ALERT-RED", f"BÁO ĐỘNG: Nghẽn băng thông do bão gói tin từ {src_ip} -> Cổng {port}!", "red")
+        else:
+            tag = "BOTNET ATTACK (SCAN/FLOOD)"
+            color = "red"
+            explanation = f"Bão gói SYN quét cổng dồn dập (SYN={syn_count}, Chu kỳ siêu nhanh 40ms, Thời lượng {duration_ms}ms). AI xác định đây là hành vi trinh sát Botnet nguy hiểm."
+            add_log("GATEWAY-AI", "ALERT-RED", f"PHÁT HIỆN TẤN CÔNG BOTNET từ {src_ip} -> Cổng {port} (Độ tin cậy: {confidence}%)", "red")
+
     elif flow_type_hint == 'c2_beacon':
-        tag = "BOTNET C2 BEACONING"
-        color = "orange"
         last_beacon_time = now_t
-        stats_counter['active_c2_channel'] = True
-        if not stats_counter['attack_in_progress']:
-            stats_counter['current_threat_level'] = 'SUSPICIOUS'
-        stats_counter['botnet_flows'] += 1
-        confidence = max(confidence, 86.0)
-        explanation = f"Kênh Heartbeat ngầm: Chu kỳ nghỉ máy móc đúng {idle_s}s, kích thước gói nhỏ cố định {fwd_bytes} bytes. Khác biệt hoàn toàn với thói quen lướt web ngẫu nhiên của con người."
-        add_log("GATEWAY-AI", "ALERT-AMBER", f"Phát hiện C2 Beaconing định kỳ 5.0s từ {src_ip} -> {dst_ip} (Độ tin cậy: {confidence}%)", "orange")
+        
+        if defense_engine == 'legacy':
+            # LEGACY FIREWALL FAILS TO DETECT! (MISSED / UNDETECTED)
+            tag = "BỎ LỌT (TƯỜNG LỬA CŨ CHO QUA)"
+            color = "slate"
+            is_botnet = 0
+            confidence = 96.0
+            explanation = f"⚠️ TƯỜNG LỬA TRUYỀN THỐNG BỎ SÓT: Tường lửa chỉ kiểm tra Port {port} và chữ ký virus. Do gói tin C2 chỉ có {fwd_bytes} bytes hợp lệ và không chứa mã độc, tường lửa ĐÁNH GIÁ AN TOÀN VÀ CHO QUA! (Mã độc ngầm lọt lưới thành công)."
+            add_log("TƯỜNG LỬA CŨ", "PASSED", f"Cho qua gói tin HTTP {fwd_bytes} bytes từ {src_ip} -> C2 (Tưởng duyệt web bình thường)", "orange")
+        else:
+            # SMART AI NIDS DETECTS!
+            tag = "BOTNET C2 BEACONING"
+            color = "orange"
+            is_botnet = 1
+            stats_counter['active_c2_channel'] = True
+            if not stats_counter['attack_in_progress']:
+                stats_counter['current_threat_level'] = 'SUSPICIOUS'
+            stats_counter['botnet_flows'] += 1
+            confidence = max(confidence, 86.0)
+            explanation = f"🎯 AI TÓM GỌN KÊNH C2: Random Forest bóc tách 57 đặc trưng CICFlowMeter: Nhận diện chu kỳ nghỉ máy móc đúng {idle_s}s cố định và kích thước {fwd_bytes}B bất biến. Phát hiện kênh điều khiển ngầm của Botnet!"
+            add_log("GATEWAY-AI", "ALERT-AMBER", f"AI phát hiện C2 Beaconing định kỳ 5.0s từ {src_ip} -> {dst_ip} (Độ tin cậy: {confidence}%)", "orange")
+            
     else:
         tag = "NORMAL (SAFE)"
         color = "green"

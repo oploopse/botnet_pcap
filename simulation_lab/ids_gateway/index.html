@@ -47,6 +47,12 @@
       stroke-dasharray: 8, 8;
       animation: dashBeacon 0.8s linear infinite;
     }
+    .flow-missed {
+      stroke: #94a3b8;
+      stroke-width: 2.5;
+      stroke-dasharray: 6, 6;
+      animation: dashWeb 1.4s linear infinite;
+    }
     .flow-attack {
       stroke: #ef4444;
       stroke-width: 5;
@@ -105,7 +111,36 @@
   </header>
 
   <!-- ============================================================== -->
-  <!-- 2. SƠ ĐỒ MẠNG LIỀN MẠCH NATIVE SVG (KHÔNG BAO GIỜ BỊ LỆCH) -->
+  <!-- 2. BỘ CHỌN CÔNG NGHỆ: ĐỐI ĐẦU TƯỜNG LỬA CŨ VS HỌC MÁY AI -->
+  <!-- ============================================================== -->
+  <div class="card-panel rounded-2xl p-4 mb-5 shadow-2xl border border-indigo-950 flex flex-col md:flex-row justify-between items-center bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950">
+    <div class="flex items-center space-x-3 mb-3 md:mb-0">
+      <span class="text-2xl">⚖️</span>
+      <div>
+        <p class="text-xs font-bold text-white uppercase tracking-wider flex items-center">
+          CHẾ ĐỘ ĐỐI CHIẾU CÔNG NGHỆ (TECHNOLOGY COMPARISON):
+        </p>
+        <p class="text-[11px] text-gray-400">Chọn giải pháp để so sánh xem mã độc C2 ngầm có bị lọt lưới hay không:</p>
+      </div>
+    </div>
+    
+    <div class="flex flex-wrap gap-2">
+      <!-- Button Legacy -->
+      <button id="btn-engine-legacy" onclick="setDefenseEngine('legacy')" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500">
+        <span>🛡️ 1. Tường Lửa Cũ (Không có AI)</span>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">BỎ LỌT C2 (AN TOÀN GIẢ)</span>
+      </button>
+
+      <!-- Button AI -->
+      <button id="btn-engine-ai" onclick="setDefenseEngine('ai')" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-emerald-950 text-emerald-200 border-emerald-500 shadow-lg ring-2 ring-emerald-400">
+        <span>🤖 2. NIDS Học Máy (Đề tài HUCE)</span>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-700 text-white">BẮT GỌN C2 5.0s</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 3. SƠ ĐỒ MẠNG LIỀN MẠCH NATIVE SVG -->
   <!-- ============================================================== -->
   <div class="card-panel rounded-2xl p-5 mb-5 shadow-2xl border border-slate-800">
     <div class="flex justify-between items-center mb-3">
@@ -120,26 +155,22 @@
       </span>
     </div>
 
-    <!-- PURE SVG CANVAS (Chứa toàn bộ Node + Đường nối + Gói tin di chuyển) -->
+    <!-- PURE SVG CANVAS -->
     <div class="w-full bg-[#070e1e] rounded-xl border border-slate-800 p-2 overflow-hidden">
       <svg viewBox="0 0 1000 240" class="w-full h-auto max-h-[260px] select-none" preserveAspectRatio="xMidYMid meet">
         <defs>
-          <!-- Gradient for Gateway -->
           <linearGradient id="gwGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#064e3b" stop-opacity="0.8" />
             <stop offset="100%" stop-color="#022c22" stop-opacity="0.9" />
           </linearGradient>
-          <!-- Gradient for Victim -->
           <linearGradient id="victimGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.8" />
             <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9" />
           </linearGradient>
-          <!-- Gradient for C2 -->
           <linearGradient id="c2Gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#7f1d1d" stop-opacity="0.8" />
             <stop offset="100%" stop-color="#18181b" stop-opacity="0.9" />
           </linearGradient>
-          <!-- Gradient for Web -->
           <linearGradient id="webGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#1e293b" stop-opacity="0.8" />
             <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9" />
@@ -150,20 +181,17 @@
           </filter>
         </defs>
 
-        <!-- ================= CONNECTION WIRES ================= -->
-        <!-- Wire 1: Victim (250, 120) -> Gateway (400, 120) -->
+        <!-- WIRES -->
         <line x1="250" y1="120" x2="400" y2="120" stroke="#1e293b" stroke-width="4" stroke-linecap="round" />
         <line id="wire-victim-gw" x1="250" y1="120" x2="400" y2="120" class="flow-normal" stroke-linecap="round" />
 
-        <!-- Wire 2: Gateway (620, 90) -> Hacker C2 (760, 65) -->
         <path d="M 620 90 C 690 90, 690 65, 760 65" stroke="#1e293b" stroke-width="4" fill="none" stroke-linecap="round" />
         <path id="wire-gw-c2" d="M 620 90 C 690 90, 690 65, 760 65" class="flow-idle" fill="none" stroke-linecap="round" />
 
-        <!-- Wire 3: Gateway (620, 150) -> Web Server (760, 175) -->
         <path d="M 620 150 C 690 150, 690 175, 760 175" stroke="#1e293b" stroke-width="4" fill="none" stroke-linecap="round" />
         <path id="wire-gw-web" d="M 620 150 C 690 150, 690 175, 760 175" class="flow-normal" fill="none" stroke-linecap="round" />
 
-        <!-- Block Shield Overlay on Wire 1 (Default hidden) -->
+        <!-- Block Shield Overlay -->
         <g id="block-indicator" style="display: none;">
           <circle cx="325" cy="120" r="18" fill="#ef4444" stroke="#ffffff" stroke-width="2" filter="url(#glow)" />
           <text x="325" y="125" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">🚫</text>
@@ -171,39 +199,33 @@
           <text x="325" y="159" font-size="10" font-weight="bold" fill="#fecaca" text-anchor="middle">ĐÃ CÁCH LY (DROP)</text>
         </g>
 
-        <!-- ================= NODE 1: VICTIM WORKSTATION (Left) ================= -->
+        <!-- NODE 1: VICTIM WORKSTATION -->
         <g id="svg-node-victim" transform="translate(30, 45)">
           <rect width="220" height="150" rx="14" fill="url(#victimGradient)" stroke="#3b82f6" stroke-width="2" />
           <text x="20" y="32" font-size="20">💻</text>
           <text x="52" y="28" font-size="13" font-weight="bold" fill="#ffffff">MÁY NẠN NHÂN</text>
           <text x="52" y="44" font-size="11" font-family="monospace" fill="#93c5fd">IP: 172.28.0.20</text>
-
           <line x1="15" y1="58" x2="205" y2="58" stroke="#334155" stroke-width="1" />
-
-          <!-- Internal processes -->
           <text x="20" y="80" font-size="11" fill="#cbd5e1">1. Người dùng: <tspan fill="#34d399">Lướt web</tspan></text>
           <text x="20" y="100" font-size="11" fill="#cbd5e1">2. Mã độc botnet: <tspan id="v-bot-status" fill="#94a3b8">Tắt (Dormant)</tspan></text>
-
           <rect x="15" y="115" width="190" height="24" rx="6" fill="#0f172a" stroke="#1e293b" />
           <text id="v-status-badge" x="110" y="131" font-size="10" font-weight="bold" fill="#34d399" text-anchor="middle">
             ● Đang duyệt tin tức bình thường
           </text>
         </g>
 
-        <!-- ================= NODE 2: GATEWAY AI NIDS (Center) ================= -->
+        <!-- NODE 2: GATEWAY -->
         <g id="svg-node-gateway" transform="translate(400, 25)">
-          <rect width="220" height="190" rx="16" fill="url(#gwGradient)" stroke="#10b981" stroke-width="2.5" filter="url(#glow)" />
-          <text x="20" y="34" font-size="22">🛡️</text>
-          <text x="55" y="28" font-size="13" font-weight="bold" fill="#34d399">CỔNG AN NINH AI NIDS</text>
+          <rect id="gw-card-rect" width="220" height="190" rx="16" fill="url(#gwGradient)" stroke="#10b981" stroke-width="2.5" filter="url(#glow)" />
+          <text id="gw-icon" x="20" y="34" font-size="22">🛡️</text>
+          <text id="gw-title" x="55" y="28" font-size="13" font-weight="bold" fill="#34d399">CỔNG AN NINH AI NIDS</text>
           <text x="55" y="44" font-size="11" font-family="monospace" fill="#a7f3d0">172.28.0.10:8501</text>
-
           <line x1="15" y1="58" x2="205" y2="58" stroke="#065f46" stroke-width="1" />
-
-          <!-- AI Model Specs -->
-          <text x="20" y="80" font-size="11" fill="#e2e8f0">🤖 Mô hình: <tspan font-weight="bold" fill="#38bdf8">Random Forest</tspan></text>
-          <text x="20" y="100" font-size="11" fill="#e2e8f0">🌲 Quy mô: <tspan font-weight="bold" fill="#a7f3d0">100 Cây quyết định</tspan></text>
-          <text x="20" y="120" font-size="11" fill="#e2e8f0">📊 Đặc trưng: <tspan font-weight="bold" fill="#fbbf24">57 CICFlowMeter</tspan></text>
-          <text x="20" y="140" font-size="11" fill="#e2e8f0">⚡ Tốc độ: <tspan font-weight="bold" fill="#38bdf8">&lt; 1.8 ms / luồng</tspan></text>
+          
+          <text id="gw-spec-1" x="20" y="80" font-size="11" fill="#e2e8f0">🤖 Mô hình: <tspan font-weight="bold" fill="#38bdf8">Random Forest</tspan></text>
+          <text id="gw-spec-2" x="20" y="100" font-size="11" fill="#e2e8f0">🌲 Quy mô: <tspan font-weight="bold" fill="#a7f3d0">100 Cây quyết định</tspan></text>
+          <text id="gw-spec-3" x="20" y="120" font-size="11" fill="#e2e8f0">📊 Đặc trưng: <tspan font-weight="bold" fill="#fbbf24">57 CICFlowMeter</tspan></text>
+          <text id="gw-spec-4" x="20" y="140" font-size="11" fill="#e2e8f0">⚡ Tốc độ: <tspan font-weight="bold" fill="#38bdf8">&lt; 1.8 ms / luồng</tspan></text>
 
           <rect x="15" y="154" width="190" height="26" rx="6" fill="#022c22" stroke="#047857" />
           <text id="gw-decision-text" x="110" y="171" font-size="10.5" font-weight="bold" fill="#34d399" text-anchor="middle">
@@ -211,27 +233,23 @@
           </text>
         </g>
 
-        <!-- ================= NODE 3: HACKER C2 SERVER (Top Right) ================= -->
+        <!-- NODE 3: HACKER C2 SERVER -->
         <g id="svg-node-c2" transform="translate(760, 20)">
           <rect width="210" height="90" rx="12" fill="url(#c2Gradient)" stroke="#ef4444" stroke-width="2" />
           <text x="18" y="32" font-size="20">💀</text>
           <text x="48" y="27" font-size="12" font-weight="bold" fill="#f87171">HACKER C2 SERVER</text>
           <text x="48" y="42" font-size="10" font-family="monospace" fill="#fca5a5">172.28.0.100:8443</text>
-
           <line x1="15" y1="52" x2="195" y2="52" stroke="#7f1d1d" stroke-width="1" />
-
           <text id="c2-cmd-text" x="18" y="72" font-size="11" fill="#cbd5e1">Lệnh phát: <tspan id="c2-cmd-val" font-weight="bold" fill="#94a3b8">SLEEP (Chờ)</tspan></text>
         </g>
 
-        <!-- ================= NODE 4: INTERNET WEB SERVERS (Bottom Right) ================= -->
+        <!-- NODE 4: INTERNET WEB SERVERS -->
         <g id="svg-node-web" transform="translate(760, 130)">
           <rect width="210" height="90" rx="12" fill="url(#webGradient)" stroke="#38bdf8" stroke-width="1.5" />
           <text x="18" y="32" font-size="20">🌐</text>
           <text x="48" y="27" font-size="12" font-weight="bold" fill="#7dd3fc">INTERNET WEB SERVERS</text>
           <text x="48" y="42" font-size="10" font-family="monospace" fill="#94a3b8">news.html, docs.pdf</text>
-
           <line x1="15" y1="52" x2="195" y2="52" stroke="#334155" stroke-width="1" />
-
           <text x="18" y="72" font-size="11" fill="#34d399">● Trực tuyến (Phục vụ người dùng)</text>
         </g>
       </svg>
@@ -239,7 +257,7 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- 3. BẢNG ĐIỀU KHIỂN KỊCH BẢN & LỜI THOẠI BẢO VỆ ĐỒ ÁN -->
+  <!-- 4. BẢNG ĐIỀU KHIỂN KỊCH BẢN & LỜI THOẠI BẢO VỆ ĐỒ ÁN -->
   <!-- ============================================================== -->
   <div class="card-panel rounded-2xl p-5 mb-5 shadow-2xl border-t-4 border-indigo-500">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
@@ -247,7 +265,7 @@
         <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center">
           <i class="fa-solid fa-film text-indigo-400 mr-2"></i> KỊCH BẢN THUYẾT TRÌNH BẢO VỆ (CHUỖI TẤN CÔNG CYBER KILL CHAIN)
         </h2>
-        <p class="text-xs text-gray-400 mt-0.5">Bấm lần lượt từ Bước 1 đến Bước 4 để mô phỏng diễn biến tấn công thực tế và giải thích cho thầy cô.</p>
+        <p class="text-xs text-gray-400 mt-0.5">Bấm các bước dưới đây để trình diễn 2 nhánh: Tường lửa cũ bị lọt lưới vs AI bắt gọn và chặn sớm.</p>
       </div>
       <div class="mt-2 md:mt-0 flex space-x-2">
         <button onclick="resetAll()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
@@ -256,7 +274,7 @@
       </div>
     </div>
 
-    <!-- 4 Step Action Buttons -->
+    <!-- Action Buttons -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
       
       <!-- STEP 1 -->
@@ -266,7 +284,7 @@
           <span class="text-base">🟢</span>
         </div>
         <p class="text-sm font-bold text-emerald-300 mt-2">1. Máy Sạch (Bình thường)</p>
-        <p class="text-[11px] text-gray-300 mt-0.5">Người dùng chỉ duyệt web. Không có mã độc.</p>
+        <p class="text-[11px] text-gray-300 mt-0.5">Người dùng chỉ duyệt web. Chưa có mã độc.</p>
       </button>
 
       <!-- STEP 2 -->
@@ -275,8 +293,8 @@
           <span class="text-[10px] font-black px-2 py-0.5 rounded bg-amber-600 text-white">BƯỚC 2</span>
           <span class="text-base">🟡</span>
         </div>
-        <p class="text-sm font-bold text-amber-300 mt-2">2. Nhiễm Botnet (C2 Beacon)</p>
-        <p class="text-[11px] text-gray-300 mt-0.5">Mã độc gửi Heartbeat ngầm 5.0s/lần về C2.</p>
+        <p class="text-sm font-bold text-amber-300 mt-2">2. Mã Độc Gọi C2 Ngầm</p>
+        <p class="text-[11px] text-gray-300 mt-0.5" id="btn-2-sub">Mã độc gửi Heartbeat 5.0s/lần về C2.</p>
       </button>
 
       <!-- STEP 3 -->
@@ -285,8 +303,8 @@
           <span class="text-[10px] font-black px-2 py-0.5 rounded bg-red-600 text-white">BƯỚC 3</span>
           <span class="text-base">🔴</span>
         </div>
-        <p class="text-sm font-bold text-red-400 mt-2">3. Bùng Nổ Tấn Công (Attack)</p>
-        <p class="text-[11px] text-gray-300 mt-0.5">Hacker lệnh SYN Scan / Flood quét dồn dập.</p>
+        <p class="text-sm font-bold text-red-400 mt-2">3. Hậu Quả: Tấn Công Bùng Nổ</p>
+        <p class="text-[11px] text-gray-300 mt-0.5">Hacker lệnh SYN Scan phá hoại mạng.</p>
       </button>
 
       <!-- STEP 4 -->
@@ -295,8 +313,8 @@
           <span class="text-[10px] font-black px-2 py-0.5 rounded bg-purple-600 text-white">BƯỚC 4</span>
           <span class="text-base">🛑</span>
         </div>
-        <p class="text-sm font-bold text-purple-300 mt-2">4. Phòng Thủ Chủ Động (IPS)</p>
-        <p class="text-[11px] text-gray-300 mt-0.5">Gateway cắt đứt mọi liên lạc, cô lập Zombie.</p>
+        <p class="text-sm font-bold text-purple-300 mt-2" id="btn-4-title">4. Phòng Thủ Chủ Động (IPS)</p>
+        <p class="text-[11px] text-gray-300 mt-0.5">Cô lập hoàn toàn Zombie tại Gateway.</p>
       </button>
 
     </div>
@@ -307,7 +325,7 @@
         <span id="cs-badge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-900 text-emerald-200">
           BƯỚC 1: TRẠNG THÁI BÌNH THƯỜNG (NORMAL OPERATION)
         </span>
-        <span class="text-xs text-gray-400 font-mono"><i class="fa-solid fa-microphone-lines text-cyan-400 mr-1"></i> LỜI THOẠI HƯỚNG DẪN CHO SINH VIÊN TRÌNH BÀY</span>
+        <span class="text-xs text-gray-400 font-mono"><i class="fa-solid fa-microphone-lines text-cyan-400 mr-1"></i> LỜI THOẠI HƯỚNG DẪN CHO SINH VIÊN BẢO VỆ</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
@@ -317,20 +335,20 @@
         </div>
 
         <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-          <p class="text-gray-400 font-bold mb-1"><i class="fa-solid fa-brain text-amber-400 mr-1.5"></i> 2. AI bóc tách đặc trưng gì?:</p>
-          <p id="cs-ai" class="text-slate-200">Thời gian nghỉ Idle ngẫu nhiên (3-6s), lượng tải về lớn (TotLen Bwd Pkts &gt; 10KB), cờ SYN=0. Thể hiện hành vi tự nhiên của con người.</p>
+          <p class="text-gray-400 font-bold mb-1"><i class="fa-solid fa-brain text-amber-400 mr-1.5"></i> 2. Hệ thống phòng thủ phản ứng gì?:</p>
+          <p id="cs-ai" class="text-slate-200">Thời gian nghỉ Idle ngẫu nhiên (3-6s), lượng tải về lớn (TotLen Bwd Pkts > 10KB), cờ SYN=0. Thể hiện hành vi tự nhiên của con người.</p>
         </div>
 
         <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
           <p class="text-gray-400 font-bold mb-1"><i class="fa-solid fa-comment-dots text-emerald-400 mr-1.5"></i> 3. Sinh viên nói với Thầy Cô:</p>
-          <p id="cs-speech" class="text-emerald-300 italic font-medium">"Kính thưa thầy cô, ở trạng thái bình thường, lưu lượng web có tính ngẫu nhiên của con người. Mô hình Random Forest đánh giá 100% An toàn, không có cảnh báo sai."</p>
+          <p id="cs-speech" class="text-emerald-300 italic font-medium">"Kính thưa thầy cô, ở trạng thái bình thường, lưu lượng web có tính ngẫu nhiên của con người. Hệ thống đánh giá 100% An toàn, không có cảnh báo sai."</p>
         </div>
       </div>
     </div>
   </div>
 
   <!-- ============================================================== -->
-  <!-- 4. METRICS CARDS -->
+  <!-- 5. METRICS CARDS -->
   <!-- ============================================================== -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
     <div class="card-panel rounded-2xl p-4 shadow-lg border border-slate-800">
@@ -339,7 +357,7 @@
         <i class="fa-solid fa-arrows-split-up-and-left text-blue-400"></i>
       </div>
       <p id="m-total" class="text-2xl md:text-3xl font-black text-white mt-1">0</p>
-      <p class="text-[11px] text-blue-300 mt-1">Chuẩn 57 đặc trưng CICFlowMeter</p>
+      <p class="text-[11px] text-blue-300 mt-1">Bóc tách theo chuẩn CICFlowMeter</p>
     </div>
 
     <div class="card-panel rounded-2xl p-4 shadow-lg border border-slate-800">
@@ -348,7 +366,7 @@
         <i class="fa-solid fa-virus-slash text-red-400"></i>
       </div>
       <p id="m-botnet" class="text-2xl md:text-3xl font-black text-red-400 mt-1">0</p>
-      <p class="text-[11px] text-red-300 mt-1">C2 Beaconing / SYN Flood</p>
+      <p class="text-[11px] text-red-300 mt-1" id="m-botnet-sub">Kênh C2 / Tấn công SYN</p>
     </div>
 
     <div class="card-panel rounded-2xl p-4 shadow-lg border border-slate-800">
@@ -373,7 +391,7 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- 5. TELEMETRY TABLE & MULTI-NODE LOG TERMINAL -->
+  <!-- 6. TELEMETRY TABLE & MULTI-NODE LOG TERMINAL -->
   <!-- ============================================================== -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
     
@@ -400,7 +418,7 @@
               <th class="p-2.5">Đích (Dst)</th>
               <th class="p-2.5">Cổng</th>
               <th class="p-2.5">Nghỉ (Idle)</th>
-              <th class="p-2.5">Phán đoán AI</th>
+              <th class="p-2.5">Đánh giá hệ thống</th>
               <th class="p-2.5">Độ tin cậy</th>
               <th class="p-2.5 text-center">Soi AI</th>
             </tr>
@@ -442,14 +460,13 @@
         <div class="flex items-center space-x-2">
           <span class="text-2xl">🔍</span>
           <div>
-            <h3 class="text-base font-bold text-white" id="modal-heading">CHI TIẾT LUỒNG MẠNG & GIẢI THÍCH AI</h3>
+            <h3 class="text-base font-bold text-white" id="modal-heading">CHI TIẾT LUỒNG MẠNG & GIẢI THÍCH</h3>
             <p class="text-xs text-cyan-300 font-mono" id="modal-subheading">Luồng #-- | Nguồn: --</p>
           </div>
         </div>
         <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xl px-2 py-1 rounded-lg">✕</button>
       </div>
 
-      <!-- Feature Grid -->
       <div class="grid grid-cols-2 gap-3 mb-4 text-xs">
         <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-700">
           <p class="text-slate-400 font-semibold mb-1">Chu kỳ nghỉ luồng (Idle Max)</p>
@@ -476,10 +493,9 @@
         </div>
       </div>
 
-      <!-- Verdict Explanation -->
       <div class="bg-slate-900 p-3.5 rounded-xl border border-blue-500/50 mb-4">
         <div class="flex justify-between items-center mb-1.5">
-          <span class="text-xs font-bold text-slate-300 uppercase">Phán quyết của Random Forest:</span>
+          <span class="text-xs font-bold text-slate-300 uppercase">Đánh giá của Hệ thống Phòng thủ:</span>
           <span id="mi-badge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-green-900 text-green-300">NORMAL</span>
         </div>
         <p class="text-xs text-slate-200 mt-1" id="mi-explanation">
@@ -496,10 +512,9 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- JAVASCRIPT CONTROLLER -->
+  <!-- 7. JAVASCRIPT CONTROLLER -->
   <!-- ============================================================== -->
   <script>
-    // Live Clock
     function updateClock() {
       const now = new Date();
       document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
@@ -509,41 +524,73 @@
 
     let cachedFlows = [];
     let currentStep = 'normal';
+    let currentEngine = 'ai'; // 'ai' or 'legacy'
 
-    const stepDetails = {
+    const stepDetailsAI = {
       'normal': {
         badge: 'BƯỚC 1: TRẠNG THÁI BÌNH THƯỜNG (NORMAL OPERATION)',
         badgeClass: 'bg-emerald-900 text-emerald-200',
         phenomenon: 'Người dùng mở trình duyệt đọc báo (news.html), tải tài liệu (docs.pdf). Mã độc Botnet chưa hoạt động.',
-        ai: 'Thời gian nghỉ Idle ngẫu nhiên (3-6s), lượng tải về lớn (TotLen Bwd Pkts > 10KB), cờ SYN=0. Thể hiện hành vi tự nhiên của con người.',
+        ai: 'Thời gian nghỉ Idle ngẫu nhiên (3-6s), dung lượng tải về lớn (>10KB), cờ SYN=0. Thể hiện hành vi tự nhiên của con người.',
         speech: '"Kính thưa thầy cô, ở trạng thái bình thường, lưu lượng web có tính ngẫu nhiên của con người. Mô hình Random Forest đánh giá 100% An toàn, không có cảnh báo sai."'
       },
       'beacon': {
-        badge: 'BƯỚC 2: PHÁT HIỆN C2 BEACONING (SUSPICIOUS ACTIVITY)',
+        badge: 'BƯỚC 2: AI PHÁT HIỆN C2 BEACONING (SUSPICIOUS ACTIVITY)',
         badgeClass: 'bg-amber-900 text-amber-200',
-        phenomenon: 'Mã độc đã lọt vào máy nạn nhân. Định kỳ đúng 5.0 giây, nó gửi 1 gói tin Heartbeat lén lút (52 bytes) về C2 Server để xin lệnh.',
-        ai: 'Chu kỳ nghỉ máy móc (Idle Max = 5.00s bất biến), kích thước gói tin siêu nhỏ cố định. Con người lướt web không bao giờ đều chằn chặn 5.0s như vậy.',
-        speech: '"Kính thưa thầy cô, điểm mạnh cốt lõi của Học máy là phát hiện được Botnet ngay ở giai đoạn C2 Beaconing lén lút này trước khi hacker kịp tấn công, điều mà tường lửa truyền thống thường bỏ sót."'
+        phenomenon: 'Mã độc đã lọt vào máy nạn nhân. Định kỳ đúng 5.0 giây, nó gửi gói tin Heartbeat lén lút (52 bytes) về C2 Server để xin lệnh.',
+        ai: '🎯 AI BẮT GỌN TẠI TRẬN: Random Forest nhận diện chu kỳ máy móc (Idle Max = 5.00s bất biến) và kích thước gói nhỏ cố định (52B). Nâng cờ Cảnh báo Vàng!',
+        speech: '"Kính thưa thầy cô, ở chế độ NIDS Học máy của chúng em, AI tóm gọn ngay kênh C2 ngầm này ở Bước 2. Lúc này, quản trị viên có thể BẤM BƯỚC 4 ĐỂ CHẶN LUÔN, dập tắt nguy cơ trước khi hacker kịp tấn công!"'
       },
       'attack': {
-        badge: 'BƯỚC 3: BÙNG NỔ TẤN CÔNG BOTNET (CRITICAL ATTACK)',
+        badge: 'BƯỚC 3: HẬU QUẢ: TẤN CÔNG BÙNG NỔ (CRITICAL ATTACK)',
         badgeClass: 'bg-red-900 text-red-200',
-        phenomenon: 'Hacker phát lệnh từ C2. Zombie lập tức xả bão gói tin SYN Scan / Flood dồn dập (40ms/gói) để do thám cổng và phá hoại mạng.',
-        ai: 'Tốc độ luồng tăng vọt, cờ SYN=1 đồng loạt trên nhiều cổng, thời lượng luồng cực ngắn (<1ms). Chỉ số nguy cơ vọt lên 98%.',
-        speech: '"Kính thưa thầy cô, khi bão gói tin SYN bùng phát, mô hình lập tức kích hoạt Báo động Đỏ (Critical Attack) với độ tin cậy trên 92%, xác nhận có đợt tấn công từ Zombie 172.28.0.20."'
+        phenomenon: 'Nếu không chặn ở Bước 2, Hacker phát lệnh từ C2. Zombie lập tức xả bão gói tin SYN Scan dồn dập (40ms/gói) để phá hoại.',
+        ai: 'Tốc độ luồng tăng vọt, cờ SYN=1 đồng loạt, thời lượng luồng cực ngắn (<1ms). Chỉ số nguy cơ vọt lên 98%.',
+        speech: '"Kính thưa thầy cô, Bước 3 là giả định nếu cuộc tấn công bùng phát. AI lập tức kích hoạt Báo động Đỏ để hệ thống tự động cách ly khẩn cấp."'
       },
       'block': {
         badge: 'BƯỚC 4: KÍCH HOẠT PHÒNG THỦ CHỦ ĐỘNG (ACTIVE DEFENSE IPS)',
         badgeClass: 'bg-purple-900 text-purple-200',
         phenomenon: 'Hệ thống đưa IP 172.28.0.20 vào danh sách đen tại Gateway. Toàn bộ gói tin từ Zombie bị ngắt kết nối (Drop 403) ngay lập tức.',
-        ai: 'Mối đe dọa được dập tắt hoàn toàn. Kênh C2 bị cắt đứt. Mạng nội bộ trở lại trạng thái an toàn.',
-        speech: '"Kính thưa thầy cô, giải pháp của nhóm không chỉ dừng lại ở cảnh báo (IDS) mà tiến tới phòng thủ chủ động (IPS), cô lập thiết bị nhiễm độc ngay tại Gateway."'
+        ai: 'Mối đe dọa được dập tắt hoàn toàn. Kênh C2 bị cắt đứt. Mạng nội bộ trở lại an toàn.',
+        speech: '"Kính thưa thầy cô, giải pháp của nhóm kết hợp phòng thủ chủ động (IPS), cô lập thiết bị nhiễm độc ngay tại Gateway."'
+      }
+    };
+
+    const stepDetailsLegacy = {
+      'normal': {
+        badge: 'BƯỚC 1: TRẠNG THÁI BÌNH THƯỜNG (TƯỜNG LỬA TRUYỀN THỐNG)',
+        badgeClass: 'bg-slate-800 text-slate-200',
+        phenomenon: 'Người dùng lướt web bình thường. Tường lửa cho qua toàn bộ lưu lượng web cổng 80/8080.',
+        ai: 'Tường lửa cũ kiểm tra Port 80 hợp lệ -> Cho qua (Allow).',
+        speech: '"Kính thưa thầy cô, khi ở chế độ Tường lửa cũ, hệ thống chỉ kiểm tra cổng và địa chỉ IP, người dùng lướt web bình thường."'
+      },
+      'beacon': {
+        badge: 'BƯỚC 2: ⚠️ TƯỜNG LỬA CŨ BỎ LỌT C2 (AN TOÀN GIẢ / MISSED!)',
+        badgeClass: 'bg-amber-950 text-amber-300 border border-amber-600',
+        phenomenon: 'Mã độc gửi Heartbeat ngầm 52 bytes về C2 Server. Nhưng Tường lửa cũ KHÔNG THỂ PHÁT HIỆN!',
+        ai: '⚠️ BỎ LỌT HOÀN TOÀN: Do gói tin đi cổng hợp lệ và không có chữ ký virus, tường lửa cũ coi đây là gói tin bình thường và CHO QUA! Mã độc tự do nằm vùng.',
+        speech: '"Kính thưa thầy cô, đây chính là tử huyệt của Tường lửa cũ: Nó hoàn toàn bị qua mặt ở Bước 2 vì gói tin quá nhỏ và hợp lệ. Vì bị bỏ lọt nên tất yếu dẫn tới thảm họa ở Bước 3!"'
+      },
+      'attack': {
+        badge: 'BƯỚC 3: 💥 THẢM HỌA BÙNG PHÁT TẤN CÔNG (DO BƯỚC 2 BỊ BỎ LỌT)',
+        badgeClass: 'bg-red-900 text-red-200',
+        phenomenon: 'Vì Bước 2 bị bỏ lọt, Hacker ung dung ra lệnh từ C2. Zombie xả bão gói tin DoS làm nghẽn toàn bộ mạng!',
+        ai: 'Lúc này băng thông bị tràn ngập, tường lửa cũ mới giật mình báo động (nhưng lúc này mạng đã bị tê liệt!).',
+        speech: '"Kính thưa thầy cô, vì hệ thống cũ bỏ lọt Bước 2 nên hậu quả là mạng bị đánh sập ở Bước 3. Đây chính là lý do vì sao trường học và doanh nghiệp bắt buộc phải nâng cấp lên AI!"'
+      },
+      'block': {
+        badge: 'BƯỚC 4: RÚT DÂY MẠNG KHẨN CẤP (MẤT BÒ MỚI LO LÀM CHUỒNG)',
+        badgeClass: 'bg-purple-900 text-purple-200',
+        phenomenon: 'Sau khi mạng bị đánh sập, quản trị viên mới phát hiện và ngắt kết nối IP nạn nhân.',
+        ai: 'Chặn muộn sau khi sự cố phá hoại đã xảy ra.',
+        speech: '"Ở hệ thống cũ, quản trị viên rơi vào thế bị động: sự cố xảy ra rồi mới đi khắc phục hậu quả."'
       }
     };
 
     function updateCheatsheetUI(step) {
       currentStep = step;
-      const data = stepDetails[step];
+      const data = (currentEngine === 'ai') ? stepDetailsAI[step] : stepDetailsLegacy[step];
       if (!data) return;
 
       const badge = document.getElementById('cs-badge');
@@ -554,7 +601,6 @@
       document.getElementById('cs-ai').innerText = data.ai;
       document.getElementById('cs-speech').innerText = data.speech;
 
-      // Update button highlights
       ['btn-1', 'btn-2', 'btn-3', 'btn-4'].forEach(id => {
         document.getElementById(id).classList.remove('ring-2', 'ring-white', 'scale-105');
       });
@@ -562,6 +608,37 @@
       if (stepIdx) {
         document.getElementById(`btn-${stepIdx}`).classList.add('ring-2', 'ring-white', 'scale-105');
       }
+
+      // Dynamic subtitle for Step 4
+      const btn4Title = document.getElementById('btn-4-title');
+      if (currentEngine === 'ai' && step === 'beacon') {
+        btn4Title.innerText = "🛡️ CHẶN SỚM TẠI BƯỚC 2 (AI)";
+      } else {
+        btn4Title.innerText = "4. Phòng Thủ Chủ Động (IPS)";
+      }
+    }
+
+    async function setDefenseEngine(engine) {
+      currentEngine = engine;
+      const btnLegacy = document.getElementById('btn-engine-legacy');
+      const btnAI = document.getElementById('btn-engine-ai');
+
+      if (engine === 'legacy') {
+        btnLegacy.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-800 text-amber-300 border-amber-500 shadow-lg ring-2 ring-amber-400";
+        btnAI.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-600";
+      } else {
+        btnAI.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-emerald-950 text-emerald-200 border-emerald-500 shadow-lg ring-2 ring-emerald-400";
+        btnLegacy.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-600";
+      }
+
+      await fetch('/api/control/engine', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({engine: engine})
+      });
+
+      updateCheatsheetUI(currentStep);
+      updateDashboard();
     }
 
     async function selectStep(step) {
@@ -588,11 +665,11 @@
       selectStep('normal');
     }
 
-    // Update SVG Topology Elements
     function updateTopologySVG(data) {
       const isBlocked = data.blocked_ips && data.blocked_ips.length > 0;
       const isAttack = data.threat_level.includes('CRITICAL');
       const isBeacon = data.threat_level.includes('SUSPICIOUS');
+      const isLegacy = data.defense_engine === 'legacy';
 
       const wireVictimGw = document.getElementById('wire-victim-gw');
       const wireGwC2 = document.getElementById('wire-gw-c2');
@@ -602,8 +679,27 @@
       const topoBadge = document.getElementById('topo-badge');
       const vBotStatus = document.getElementById('v-bot-status');
       const vStatusBadge = document.getElementById('v-status-badge');
+      const gwTitle = document.getElementById('gw-title');
       const gwDecision = document.getElementById('gw-decision-text');
       const c2CmdVal = document.getElementById('c2-cmd-val');
+      const gwCard = document.getElementById('gw-card-rect');
+      const gwSpec1 = document.getElementById('gw-spec-1');
+      const gwSpec2 = document.getElementById('gw-spec-2');
+
+      // Update Gateway Specs based on engine
+      if (isLegacy) {
+        gwTitle.innerText = "TƯỜNG LỬA TRUYỀN THỐNG";
+        gwTitle.setAttribute('fill', '#94a3b8');
+        gwCard.setAttribute('stroke', '#64748b');
+        gwSpec1.innerHTML = '⚙️ Cơ chế: <tspan font-weight="bold" fill="#f59e0b">Luật tĩnh (Rule-based)</tspan>';
+        gwSpec2.innerHTML = '🔍 Giám sát: <tspan font-weight="bold" fill="#94a3b8">Chỉ Port & Chữ ký</tspan>';
+      } else {
+        gwTitle.innerText = "CỔNG AN NINH AI NIDS";
+        gwTitle.setAttribute('fill', '#34d399');
+        gwCard.setAttribute('stroke', '#10b981');
+        gwSpec1.innerHTML = '🤖 Mô hình: <tspan font-weight="bold" fill="#38bdf8">Random Forest</tspan>';
+        gwSpec2.innerHTML = '🌲 Quy mô: <tspan font-weight="bold" fill="#a7f3d0">100 Cây quyết định</tspan>';
+      }
 
       if (isBlocked) {
         blockInd.style.display = 'block';
@@ -620,9 +716,9 @@
 
         gwDecision.innerText = 'IPS: DROP TOÀN BỘ GÓI TIN TỪ 172.28.0.20';
         gwDecision.setAttribute('fill', '#c084fc');
-
         c2CmdVal.innerText = 'MẤT KẾT NỐI ZOMBIE';
         c2CmdVal.setAttribute('fill', '#94a3b8');
+
       } else if (isAttack) {
         blockInd.style.display = 'none';
         wireVictimGw.className.baseVal = 'flow-attack';
@@ -636,29 +732,51 @@
         vStatusBadge.innerText = '💥 Đang tấn công dò quét cổng';
         vStatusBadge.setAttribute('fill', '#ef4444');
 
-        gwDecision.innerText = 'CẢNH BÁO: BÃO GÓI TIN BOTNET PHÁT HIỆN';
+        gwDecision.innerText = isLegacy ? 'TƯỜNG LỬA: NGHẼN BĂNG THÔNG DO BÃO GÓI!' : 'AI: PHÁT HIỆN BÃO GÓI SYN TẤN CÔNG!';
         gwDecision.setAttribute('fill', '#ef4444');
-
         c2CmdVal.innerText = 'SCAN (TẤN CÔNG)';
         c2CmdVal.setAttribute('fill', '#ef4444');
-      } else if (isBeacon) {
+
+      } else if (data.active_mode === 'beacon') {
         blockInd.style.display = 'none';
-        wireVictimGw.className.baseVal = 'flow-beacon';
-        wireGwC2.className.baseVal = 'flow-beacon';
-        wireGwWeb.className.baseVal = 'flow-normal';
+        
+        if (isLegacy) {
+          // MISSED IN LEGACY!
+          wireVictimGw.className.baseVal = 'flow-missed';
+          wireGwC2.className.baseVal = 'flow-missed';
+          wireGwWeb.className.baseVal = 'flow-normal';
 
-        topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-300 border border-amber-700';
-        topoBadge.innerHTML = '⚠️ CẢNH BÁO: PHÁT HIỆN KÊNH C2 BEACONING NGẦM (5.0s)';
+          topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-300 border border-amber-600';
+          topoBadge.innerHTML = '⚠️ TƯỜNG LỬA CŨ BỎ LỌT C2: GÓI TIN ĐƯỢC CHO QUA (AN TOÀN GIẢ)';
 
-        vBotStatus.innerHTML = '<tspan fill="#fbbf24" font-weight="bold">Beaconing (5.0s/lần)</tspan>';
-        vStatusBadge.innerText = '🦠 Gửi Heartbeat ngầm 5s về C2';
-        vStatusBadge.setAttribute('fill', '#fbbf24');
+          vBotStatus.innerHTML = '<tspan fill="#fbbf24" font-weight="bold">Beaconing (Qua mặt Tường lửa)</tspan>';
+          vStatusBadge.innerText = '🦠 Lọt lưới: Gửi Heartbeat lén 5s';
+          vStatusBadge.setAttribute('fill', '#fbbf24');
 
-        gwDecision.innerText = 'AI: PHÁT HIỆN CHU KỲ NGHỈ ĐỊNH KỲ 5.0s';
-        gwDecision.setAttribute('fill', '#fbbf24');
+          gwDecision.innerText = 'TƯỜNG LỬA CŨ: CHO QUA (TƯỞNG LƯỚT WEB)';
+          gwDecision.setAttribute('fill', '#94a3b8');
+          c2CmdVal.innerText = 'SLEEP (ĐIỂM DANH THÀNH CÔNG)';
+          c2CmdVal.setAttribute('fill', '#34d399');
 
-        c2CmdVal.innerText = 'SLEEP (ĐIỂM DANH)';
-        c2CmdVal.setAttribute('fill', '#fbbf24');
+        } else {
+          // DETECTED IN AI!
+          wireVictimGw.className.baseVal = 'flow-beacon';
+          wireGwC2.className.baseVal = 'flow-beacon';
+          wireGwWeb.className.baseVal = 'flow-normal';
+
+          topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-300 border border-amber-700';
+          topoBadge.innerHTML = '🎯 CẢNH BÁO: AI BẮT GỌN KÊNH C2 BEACONING NGẦM (5.0s)';
+
+          vBotStatus.innerHTML = '<tspan fill="#fbbf24" font-weight="bold">Beaconing (Bị AI tóm gọn)</tspan>';
+          vStatusBadge.innerText = '🦠 Bị phát hiện: Heartbeat ngầm 5s';
+          vStatusBadge.setAttribute('fill', '#fbbf24');
+
+          gwDecision.innerText = 'AI: PHÁT HIỆN CHU KỲ NGHỈ ĐỊNH KỲ 5.0s';
+          gwDecision.setAttribute('fill', '#fbbf24');
+          c2CmdVal.innerText = 'SLEEP (ĐIỂM DANH)';
+          c2CmdVal.setAttribute('fill', '#fbbf24');
+        }
+
       } else {
         blockInd.style.display = 'none';
         wireVictimGw.className.baseVal = 'flow-normal';
@@ -672,15 +790,13 @@
         vStatusBadge.innerText = '● Đang duyệt tin tức bình thường';
         vStatusBadge.setAttribute('fill', '#34d399');
 
-        gwDecision.innerText = 'CHẾ ĐỘ: GIÁM SÁT THỜI GIAN THỰC';
+        gwDecision.innerText = isLegacy ? 'TƯỜNG LỬA: GIÁM SÁT CỔNG MẠNG' : 'AI NIDS: GIÁM SÁT THỜI GIAN THỰC';
         gwDecision.setAttribute('fill', '#34d399');
-
         c2CmdVal.innerText = 'SLEEP (Chờ)';
         c2CmdVal.setAttribute('fill', '#94a3b8');
       }
     }
 
-    // Update Dashboard Metrics & Table
     async function updateDashboard() {
       try {
         const res = await fetch('/api/stats');
@@ -696,7 +812,6 @@
         document.getElementById('m-blocked').innerText = blockedCount + ' IP';
         document.getElementById('m-blocked-sub').innerText = blockedCount > 0 ? 'Đã cô lập IP 172.28.0.20' : 'Hệ thống mở thông suốt';
 
-        // Update Topology
         updateTopologySVG(data);
 
         // Update Flow Table
@@ -709,6 +824,8 @@
               badgeClass = 'bg-red-900 text-red-200 border border-red-600 animate-pulse';
             } else if (flow.color === 'orange') {
               badgeClass = 'bg-amber-900 text-amber-200 border border-amber-600';
+            } else if (flow.color === 'slate') {
+              badgeClass = 'bg-slate-800 text-slate-300 border border-slate-600';
             }
 
             rowsHtml += `
@@ -738,7 +855,6 @@
       }
     }
 
-    // Update Logs
     async function updateLogs() {
       try {
         const res = await fetch('/api/logs');
@@ -778,7 +894,6 @@
       }
     }
 
-    // Flow Inspector Modal
     function inspectFlow(index) {
       const flow = cachedFlows[index];
       if (!flow) return;
@@ -800,7 +915,7 @@
         badge.className = 'px-2.5 py-0.5 rounded text-xs font-bold bg-green-900 text-green-300 border border-green-600';
       }
 
-      document.getElementById('mi-explanation').innerText = flow.explanation || "Luồng mạng được phân tích qua 57 đặc trưng CICFlowMeter bằng mô hình Random Forest.";
+      document.getElementById('mi-explanation').innerText = flow.explanation || "Luồng mạng được phân tích qua các đặc trưng thống kê.";
       document.getElementById('modal-inspector').classList.remove('hidden');
     }
 

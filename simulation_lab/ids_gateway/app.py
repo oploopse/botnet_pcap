@@ -32,12 +32,22 @@ async def get_stats():
     if is_blocked:
         threat = "DEFENDED (THREAT MITIGATED & ISOLATED)"
         risk_score = 5
-    elif recent_attack:
-        threat = "CRITICAL (ATTACK CONFIRMED)"
-        risk_score = 98
-    elif recent_beacon or active_mode == 'beacon':
-        threat = "SUSPICIOUS (C2 BEACON DETECTED)"
-        risk_score = 72
+    elif engine.defense_engine == 'legacy':
+        # Legacy firewall: blind to C2 beacons, only notices massive flood
+        if recent_attack:
+            threat = "CRITICAL (NGHẼN MẠNG DO BÃO GÓI)"
+            risk_score = 98
+        else:
+            threat = "LOW (TƯỜNG LỬA CHO LÀ AN TOÀN - BỎ LỌT C2)"
+            risk_score = 15
+    else:
+        # AI NIDS engine
+        if recent_attack:
+            threat = "CRITICAL (ATTACK CONFIRMED)"
+            risk_score = 98
+        elif recent_beacon or active_mode == 'beacon':
+            threat = "SUSPICIOUS (C2 BEACON DETECTED)"
+            risk_score = 72
         
     return {
         'total_flows': engine.stats_counter['total_flows'],
@@ -46,9 +56,21 @@ async def get_stats():
         'threat_level': threat,
         'risk_score': risk_score,
         'active_mode': active_mode,
+        'defense_engine': engine.defense_engine,
         'blocked_ips': list(engine.blocked_ips),
         'flows': list(engine.flow_history)[:35]
     }
+
+@app.post("/api/control/engine")
+async def toggle_defense_engine(request: Request):
+    data = await request.json()
+    new_engine = data.get('engine', 'ai')
+    engine.defense_engine = new_engine
+    if new_engine == 'legacy':
+        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang chế độ: 🛡️ TƯỜNG LỬA TRUYỀN THỐNG (Rule-based, không có AI)", "orange")
+    else:
+        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang chế độ: 🤖 NIDS HỌC MÁY RANDOM FOREST (Đề tài HUCE)", "green")
+    return {"status": "ok", "defense_engine": engine.defense_engine}
 
 @app.get("/api/logs")
 async def get_logs():
