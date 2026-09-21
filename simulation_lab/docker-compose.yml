@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  c2-server:
+    build: ./c2_server
+    container_name: c2-server
+    hostname: c2-server
+    networks:
+      botnet_sim_net:
+        ipv4_address: 172.28.0.100
+    restart: unless-stopped
+
+  ids-gateway:
+    build: ./ids_gateway
+    container_name: ids-gateway
+    hostname: ids-gateway
+    ports:
+      - "8501:8501"
+    volumes:
+      - ../saved_models:/app/models:ro
+    networks:
+      botnet_sim_net:
+        ipv4_address: 172.28.0.10
+    depends_on:
+      - c2-server
+    restart: unless-stopped
+
+  victim-zombie:
+    build: ./victim_zombie
+    container_name: victim-zombie
+    hostname: victim-zombie
+    networks:
+      botnet_sim_net:
+        ipv4_address: 172.28.0.20
+    depends_on:
+      - ids-gateway
+      - c2-server
+    restart: unless-stopped
+
+networks:
+  botnet_sim_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
