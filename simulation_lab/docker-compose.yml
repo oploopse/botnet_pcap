@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   c2-server:
     build: ./c2_server
@@ -25,16 +23,73 @@ services:
       - c2-server
     restart: unless-stopped
 
-  victim-zombie:
+  # Máy F0: Nạn nhân ban đầu (Patient Zero)
+  victim-f0:
     build: ./victim_zombie
-    container_name: victim-zombie
-    hostname: victim-zombie
+    container_name: victim-f0
+    hostname: victim-f0
+    environment:
+      - NODE_ID=f0
+      - ROLE=PatientZero
+      - DEVICE_NAME=Máy F0 (Nạn nhân gốc)
+      - IP_ADDRESS=172.28.0.20
     networks:
       botnet_sim_net:
         ipv4_address: 172.28.0.20
     depends_on:
       - ids-gateway
       - c2-server
+    restart: unless-stopped
+
+  # Máy F1-1: Phòng Kế toán
+  victim-f1-1:
+    build: ./victim_zombie
+    container_name: victim-f1-1
+    hostname: victim-f1-1
+    environment:
+      - NODE_ID=f1_1
+      - ROLE=F1-Ketoan
+      - DEVICE_NAME=Máy F1-1 (Kế toán)
+      - IP_ADDRESS=172.28.0.21
+    networks:
+      botnet_sim_net:
+        ipv4_address: 172.28.0.21
+    depends_on:
+      - ids-gateway
+    restart: unless-stopped
+
+  # Máy F1-2: Phòng Nhân sự
+  victim-f1-2:
+    build: ./victim_zombie
+    container_name: victim-f1-2
+    hostname: victim-f1-2
+    environment:
+      - NODE_ID=f1_2
+      - ROLE=F1-Nhansu
+      - DEVICE_NAME=Máy F1-2 (Nhân sự)
+      - IP_ADDRESS=172.28.0.22
+    networks:
+      botnet_sim_net:
+        ipv4_address: 172.28.0.22
+    depends_on:
+      - ids-gateway
+    restart: unless-stopped
+
+  # Máy F1-3: Phòng Kỹ thuật
+  victim-f1-3:
+    build: ./victim_zombie
+    container_name: victim-f1-3
+    hostname: victim-f1-3
+    environment:
+      - NODE_ID=f1_3
+      - ROLE=F1-Kythuat
+      - DEVICE_NAME=Máy F1-3 (Kỹ thuật)
+      - IP_ADDRESS=172.28.0.23
+    networks:
+      botnet_sim_net:
+        ipv4_address: 172.28.0.23
+    depends_on:
+      - ids-gateway
     restart: unless-stopped
 
 networks:

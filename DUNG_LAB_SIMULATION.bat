@@ -8,7 +8,7 @@ echo =======================================================================
 echo.
 
 cd /d "%~dp0simulation_lab"
-echo Đang tắt 3 máy ảo container...
+echo Đang tắt 6 máy ảo container...
 docker compose down
 
 echo.

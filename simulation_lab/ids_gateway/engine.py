@@ -6,6 +6,7 @@ import random
 import threading
 import urllib.request
 import urllib.error
+import urllib.parse
 from collections import deque
 import numpy as np
 import http.server
@@ -16,6 +17,21 @@ flow_history = deque(maxlen=100)
 system_logs = deque(maxlen=60)
 blocked_ips = set()
 
+# Enterprise LAN Workstations status tracker
+workstations = {
+    'f0': {'id': 'f0', 'ip': '172.28.0.20', 'name': 'Máy F0 (Patient Zero)', 'role': 'Nạn nhân gốc', 'dept': 'Ban Giám Đốc', 'status': 'clean'},
+    'f1_1': {'id': 'f1_1', 'ip': '172.28.0.21', 'name': 'Máy F1-1 (Kế toán)', 'role': 'Đồng nghiệp LAN', 'dept': 'Phòng Kế Toán', 'status': 'clean'},
+    'f1_2': {'id': 'f1_2', 'ip': '172.28.0.22', 'name': 'Máy F1-2 (Nhân sự)', 'role': 'Đồng nghiệp LAN', 'dept': 'Phòng Nhân Sự', 'status': 'clean'},
+    'f1_3': {'id': 'f1_3', 'ip': '172.28.0.23', 'name': 'Máy F1-3 (Kỹ thuật)', 'role': 'Đồng nghiệp LAN', 'dept': 'Phòng Kỹ Thuật', 'status': 'clean'}
+}
+
+ip_to_bot = {
+    '172.28.0.20': 'f0',
+    '172.28.0.21': 'f1_1',
+    '172.28.0.22': 'f1_2',
+    '172.28.0.23': 'f1_3'
+}
+
 stats_counter = {
     'total_flows': 0,
     'botnet_flows': 0,
@@ -23,7 +39,7 @@ stats_counter = {
     'current_threat_level': 'LOW', # 'LOW', 'MEDIUM', 'HIGH'
     'active_c2_channel': False,
     'attack_in_progress': False,
-    'active_mode': 'normal' # 'normal', 'beacon', 'attack'
+    'active_mode': 'normal' # 'normal', 'f0_c2', 'spread', 'attack'
 }
 
 defense_engine = "ai"  # "ai" (Random Forest 57 feats) or "legacy" (Traditional Rule-based Firewall)
@@ -74,7 +90,7 @@ load_ai_model()
 
 def classify_network_flow(src_ip, dst_ip, port, duration_us, fwd_pkts, bwd_pkts, fwd_bytes, bwd_bytes, syn_count, idle_us, flow_type_hint):
     """Feeds extracted flow features to Random Forest and returns evaluated record."""
-    global stats_counter
+    global stats_counter, last_attack_time, last_beacon_time, defense_engine
     
     # Check if source IP is blocked
     if src_ip in blocked_ips:
@@ -84,74 +100,64 @@ def classify_network_flow(src_ip, dst_ip, port, duration_us, fwd_pkts, bwd_pkts,
     is_botnet = 0
     confidence = 99.2
     pkt_len_var = 120.5 if flow_type_hint == 'normal' else 2.1
-
-    # Use model with real CTU-13 baseline NumPy vectors
-    if rf_model is not None and sample_pools.get('normal') is not None:
-        try:
-            if flow_type_hint == 'normal':
-                pool = sample_pools['normal']
-                row = pool[random.randint(0, len(pool)-1)].copy()
-                row[0] = float(duration_us)   # Flow Duration
-                row[4] = float(bwd_bytes)     # TotLen Bwd Pkts
-                X = row.reshape(1, -1)
-                pred = rf_model.predict(X)[0]
-                probs = rf_model.predict_proba(X)[0]
-                is_botnet = int(pred)
-                confidence = round(float(probs[is_botnet]) * 100, 2)
-            else:
-                pool = sample_pools['attack']
-                row = pool[random.randint(0, len(pool)-1)].copy()
-                if flow_type_hint == 'attack':
-                    row[40] = 1.0             # SYN Flag Cnt
-                    row[1] = 35.0             # Tot Fwd Pkts
-                else:
-                    row[55] = float(max(4000000.0, idle_us)) # Idle Max
-                X = row.reshape(1, -1)
-                pred = rf_model.predict(X)[0]
-                probs = rf_model.predict_proba(X)[0]
-                is_botnet = int(pred)
-                confidence = round(float(probs[is_botnet]) * 100, 2)
-        except Exception as e:
-            is_botnet = 1 if flow_type_hint in ['c2_beacon', 'attack'] else 0
-    else:
-        is_botnet = 1 if flow_type_hint in ['c2_beacon', 'attack'] else 0
-
-    # Categorize behavior & Explanations
     idle_s = round(idle_us / 1e6, 2)
     duration_ms = round(duration_us / 1000, 2)
-
-    global stats_counter, last_attack_time, last_beacon_time, defense_engine
     now_t = time.time()
 
-    if flow_type_hint == 'attack':
+    # Flow Evaluation Logic
+    if flow_type_hint == 'lateral_spread':
+        # Lateral Movement / Worm propagation inside company LAN
+        is_botnet = 1
+        confidence = 94.5
+        stats_counter['botnet_flows'] += 1
+        
+        if defense_engine == 'legacy':
+            tag = "BỎ LỌT (TƯỜNG LỬA BỎ QUA NỘI BỘ)"
+            color = "slate"
+            is_botnet = 0
+            explanation = f"⚠️ TƯỜNG LỬA CŨ BỎ QUA NỘI BỘ: Tường lửa biên chỉ soi cổng Internet, KHÔNG GIÁM SÁT luồng LAN ngang hàng (East-West traffic). F0 ({src_ip}) tự do quét và lây lan sang {dst_ip} mà không bị ngăn chặn!"
+            add_log("TƯỜNG LỬA CŨ", "MISSED", f"Bỏ qua luồng lây lan nội bộ từ {src_ip} sang {dst_ip} (Không có AI soi LAN)", "orange")
+        else:
+            tag = "LÂY NHIỄM NỘI BỘ (LATERAL SPREAD)"
+            color = "purple"
+            stats_counter['active_c2_channel'] = True
+            stats_counter['current_threat_level'] = 'CRITICAL'
+            explanation = f"🕷️ PHÁT HIỆN LÂY NHIỄM NỘI BỘ (LATERAL MOVEMENT): F0 ({src_ip}) đang phát tán mã độc sâu mạng (Worm Exploit) sang máy đồng nghiệp {dst_ip} trong cùng mạng LAN công ty!"
+            add_log("GATEWAY-AI", "ALERT-PURPLE", f"PHÁT HIỆN LÂY NHIỄM NỘI BỘ: {src_ip} -> {dst_ip} (Độ tin cậy: {confidence}%)", "purple")
+
+    elif flow_type_hint == 'attack':
         last_attack_time = now_t
         stats_counter['attack_in_progress'] = True
         stats_counter['current_threat_level'] = 'CRITICAL'
         stats_counter['botnet_flows'] += 1
-        confidence = max(confidence, 92.5)
+        confidence = max(confidence, 93.0)
+        
+        # Identify which bot is attacking
+        bot_name = workstations.get(ip_to_bot.get(src_ip, ''), {}).get('name', src_ip)
         
         if defense_engine == 'legacy':
             tag = "TẤN CÔNG (NGHẼN MẠNG BÃO GÓI)"
             color = "red"
-            explanation = f"Tường lửa cũ chỉ gióng chuông khi bão gói SYN dồn dập làm tràn băng thông mạng ({duration_ms}ms). Nhưng lúc này hệ thống đã bị tấn công bùng phát!"
-            add_log("TƯỜNG LỬA CŨ", "ALERT-RED", f"BÁO ĐỘNG: Nghẽn băng thông do bão gói tin từ {src_ip} -> Cổng {port}!", "red")
+            explanation = f"Bão gói SYN tràn ngập làm nghẽn băng thông ({duration_ms}ms). Tường lửa cũ gióng chuông báo động nhưng lúc này hệ thống đã bị tấn công bùng phát!"
+            add_log("TƯỜNG LỬA CŨ", "ALERT-RED", f"BÁO ĐỘNG: Nghẽn mạng do bão gói tin từ {bot_name} ({src_ip})!", "red")
         else:
             tag = "BOTNET ATTACK (SCAN/FLOOD)"
             color = "red"
-            explanation = f"Bão gói SYN quét cổng dồn dập (SYN={syn_count}, Chu kỳ siêu nhanh 40ms, Thời lượng {duration_ms}ms). AI xác định đây là hành vi trinh sát Botnet nguy hiểm."
-            add_log("GATEWAY-AI", "ALERT-RED", f"PHÁT HIỆN TẤN CÔNG BOTNET từ {src_ip} -> Cổng {port} (Độ tin cậy: {confidence}%)", "red")
+            explanation = f"Bão gói SYN quét dồn dập (SYN={syn_count}, Chu kỳ siêu nhanh 40ms, Thời lượng {duration_ms}ms). AI xác định đợt tấn công từ Zombie {bot_name} ({src_ip})!"
+            add_log("GATEWAY-AI", "ALERT-RED", f"PHÁT HIỆN TẤN CÔNG BOTNET từ {bot_name} ({src_ip}) -> Cổng {port} (Độ tin cậy: {confidence}%)", "red")
 
     elif flow_type_hint == 'c2_beacon':
         last_beacon_time = now_t
+        bot_name = workstations.get(ip_to_bot.get(src_ip, ''), {}).get('name', src_ip)
         
         if defense_engine == 'legacy':
-            # LEGACY FIREWALL FAILS TO DETECT! (MISSED / UNDETECTED)
+            # LEGACY FIREWALL FAILS TO DETECT!
             tag = "BỎ LỌT (TƯỜNG LỬA CŨ CHO QUA)"
             color = "slate"
             is_botnet = 0
             confidence = 96.0
-            explanation = f"⚠️ TƯỜNG LỬA TRUYỀN THỐNG BỎ SÓT: Tường lửa chỉ kiểm tra Port {port} và chữ ký virus. Do gói tin C2 chỉ có {fwd_bytes} bytes hợp lệ và không chứa mã độc, tường lửa ĐÁNH GIÁ AN TOÀN VÀ CHO QUA! (Mã độc ngầm lọt lưới thành công)."
-            add_log("TƯỜNG LỬA CŨ", "PASSED", f"Cho qua gói tin HTTP {fwd_bytes} bytes từ {src_ip} -> C2 (Tưởng duyệt web bình thường)", "orange")
+            explanation = f"⚠️ TƯỜNG LỬA CŨ BỎ SÓT: Chỉ kiểm tra Port {port} và chữ ký virus. Do gói tin C2 từ {bot_name} chỉ có {fwd_bytes}B hợp lệ HTTP và không chứa mã virus, tường lửa ĐÁNH GIÁ AN TOÀN VÀ CHO QUA!"
+            add_log("TƯỜNG LỬA CŨ", "PASSED", f"Cho qua gói tin C2 52B từ {bot_name} -> P0 (Tưởng duyệt web bình thường)", "orange")
         else:
             # SMART AI NIDS DETECTS!
             tag = "BOTNET C2 BEACONING"
@@ -161,18 +167,19 @@ def classify_network_flow(src_ip, dst_ip, port, duration_us, fwd_pkts, bwd_pkts,
             if not stats_counter['attack_in_progress']:
                 stats_counter['current_threat_level'] = 'SUSPICIOUS'
             stats_counter['botnet_flows'] += 1
-            confidence = max(confidence, 86.0)
-            explanation = f"🎯 AI TÓM GỌN KÊNH C2: Random Forest bóc tách 57 đặc trưng CICFlowMeter: Nhận diện chu kỳ nghỉ máy móc đúng {idle_s}s cố định và kích thước {fwd_bytes}B bất biến. Phát hiện kênh điều khiển ngầm của Botnet!"
-            add_log("GATEWAY-AI", "ALERT-AMBER", f"AI phát hiện C2 Beaconing định kỳ 5.0s từ {src_ip} -> {dst_ip} (Độ tin cậy: {confidence}%)", "orange")
+            confidence = max(confidence, 86.5)
+            explanation = f"🎯 AI TÓM GỌN KÊNH C2: Random Forest nhận diện chu kỳ nghỉ máy móc đúng {idle_s}s cố định và kích thước {fwd_bytes}B bất biến từ {bot_name} ({src_ip}). Bắt trúng kênh điều khiển P0 C2 Master!"
+            add_log("GATEWAY-AI", "ALERT-AMBER", f"AI phát hiện C2 Beaconing định kỳ 5.0s từ {bot_name} -> P0 (Độ tin cậy: {confidence}%)", "orange")
             
     else:
         tag = "NORMAL (SAFE)"
         color = "green"
         stats_counter['normal_flows'] += 1
-        confidence = max(confidence, 98.6)
-        explanation = f"Lưu lượng web thông thường: Dung lượng tải lớn ({bwd_bytes:,} bytes), thời gian nghỉ Idle ngẫu nhiên ({idle_s}s), cờ SYN=0. Phù hợp hành vi người dùng tự nhiên."
-        if random.random() < 0.35:
-            add_log("GATEWAY-AI", "INSPECT", f"Luồng HTTP Web từ {src_ip} ({bwd_bytes:,} B) -> Phán đoán: NORMAL ({confidence}%)", "green")
+        confidence = max(confidence, 98.8)
+        bot_name = workstations.get(ip_to_bot.get(src_ip, ''), {}).get('name', src_ip)
+        explanation = f"Lưu lượng web thông thường từ {bot_name}: Dung lượng tải lớn ({bwd_bytes:,} bytes), thời gian nghỉ Idle ngẫu nhiên ({idle_s}s), cờ SYN=0. Phù hợp hành vi người dùng tự nhiên."
+        if random.random() < 0.2:
+            add_log("GATEWAY-AI", "INSPECT", f"Luồng HTTP Web từ {bot_name} ({bwd_bytes:,} B) -> Phán đoán: NORMAL ({confidence}%)", "green")
 
     stats_counter['total_flows'] += 1
 
@@ -204,7 +211,7 @@ def classify_network_flow(src_ip, dst_ip, port, duration_us, fwd_pkts, bwd_pkts,
 # INLINE TRAFFIC INSPECTION HANDLERS
 # ------------------------------------------------------------------------------
 class C2InspectionHandler(http.server.BaseHTTPRequestHandler):
-    """Inspects C2 traffic on port 8443 and forwards to real c2-server."""
+    """Inspects C2 traffic on port 8443 and forwards to real c2-server (P0)."""
     def log_message(self, format, *args):
         return
 
@@ -223,7 +230,13 @@ class C2InspectionHandler(http.server.BaseHTTPRequestHandler):
         idle_us = int((t_start - last_t) * 1e6)
         ip_last_seen[client_ip] = t_start
 
-        # Forward request to C2 server
+        # Track bot state in workstations
+        if client_ip in ip_to_bot:
+            b_id = ip_to_bot[client_ip]
+            if workstations[b_id]['status'] != 'blocked':
+                workstations[b_id]['status'] = 'infected'
+
+        # Forward request to C2 server (P0)
         c2_resp_body = b'{}'
         c2_url = "http://c2-server:8443/beacon"
         try:
@@ -238,7 +251,7 @@ class C2InspectionHandler(http.server.BaseHTTPRequestHandler):
         # Classify with AI
         classify_network_flow(
             src_ip=client_ip,
-            dst_ip="172.28.0.100 (C2)",
+            dst_ip="172.28.0.100 (P0 C2)",
             port=8443,
             duration_us=duration_us,
             fwd_pkts=2,
@@ -257,7 +270,7 @@ class C2InspectionHandler(http.server.BaseHTTPRequestHandler):
 
 
 class WebInspectionHandler(http.server.BaseHTTPRequestHandler):
-    """Inspects Web browsing & attack probes on port 8080."""
+    """Inspects Web browsing, attack probes & lateral movement on port 8080."""
     def log_message(self, format, *args):
         return
 
@@ -269,18 +282,33 @@ class WebInspectionHandler(http.server.BaseHTTPRequestHandler):
             return
 
         t_start = time.time()
+        parsed_url = urllib.parse.urlparse(self.path)
+        query_params = urllib.parse.parse_qs(parsed_url.query)
+
         is_attack_probe = 'probe' in self.path or 'syn=1' in self.path
-        
+        is_lateral_infect = 'infect' in self.path
+
         last_t = ip_last_seen.get(client_ip, t_start - 3.5)
         idle_us = int((t_start - last_t) * 1e6)
         ip_last_seen[client_ip] = t_start
 
-        if is_attack_probe:
+        if is_lateral_infect:
+            src = query_params.get('src', [client_ip])[0]
+            target = query_params.get('target', ['172.28.0.21'])[0]
+            duration_us = 80
+            fwd_bytes = 160
+            bwd_bytes = 80
+            syn_cnt = 0
+            flow_hint = 'lateral_spread'
+            dst_display = f"{target} (LAN)"
+            resp_body = b'{"status": "ok", "action": "lateral_logged"}'
+        elif is_attack_probe:
             duration_us = 45
             fwd_bytes = 40
             bwd_bytes = 0
             syn_cnt = 1
             flow_hint = 'attack'
+            dst_display = "Target Server (DoS)"
             resp_body = b"SYN-ACK"
         else:
             duration_us = int(np.random.uniform(15000, 75000))
@@ -288,15 +316,16 @@ class WebInspectionHandler(http.server.BaseHTTPRequestHandler):
             bwd_bytes = int(np.random.uniform(12000, 48000))
             syn_cnt = 0
             flow_hint = 'normal'
+            dst_display = "Internet (Web Server)"
             resp_body = b"<html><body>Normal Web Page Content</body></html>" + b"A" * bwd_bytes
 
         classify_network_flow(
             src_ip=client_ip,
-            dst_ip="Internet (Web Server)",
-            port=80,
+            dst_ip=dst_display,
+            port=80 if not is_lateral_infect else 5000,
             duration_us=duration_us,
-            fwd_pkts=4 if not is_attack_probe else 25,
-            bwd_pkts=10 if not is_attack_probe else 0,
+            fwd_pkts=4 if (not is_attack_probe and not is_lateral_infect) else 20,
+            bwd_pkts=10 if (not is_attack_probe and not is_lateral_infect) else 2,
             fwd_bytes=fwd_bytes,
             bwd_bytes=bwd_bytes,
             syn_count=syn_cnt,
@@ -305,7 +334,7 @@ class WebInspectionHandler(http.server.BaseHTTPRequestHandler):
         )
 
         self.send_response(200)
-        self.send_header('Content-Type', 'text/html')
+        self.send_header('Content-Type', 'text/html' if not is_lateral_infect else 'application/json')
         self.end_headers()
         self.wfile.write(resp_body)
 
@@ -319,4 +348,4 @@ def start_proxy_servers():
     t2 = threading.Thread(target=web_proxy.serve_forever, daemon=True)
     t1.start()
     t2.start()
-    add_log("GATEWAY", "STARTUP", "Cảm biến luồng mạng đã kích hoạt trên Cổng 8443 (C2) & 8080 (Web)", "green")
+    add_log("GATEWAY", "STARTUP", "Cảm biến luồng mạng đã kích hoạt trên Cổng 8443 (C2 Inspector) & 8080 (Web/LAN Inspector)", "green")

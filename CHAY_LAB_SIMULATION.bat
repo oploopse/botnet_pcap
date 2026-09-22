@@ -18,7 +18,7 @@ if %errorlevel% neq 0 (
     timeout /t 15 >nul
 )
 
-echo [2/3] Đang khởi chạy 3 máy ảo Docker (victim-zombie, ids-gateway, c2-server)...
+echo [2/3] Đang khởi chạy 6 máy ảo Docker (c2-server P0, ids-gateway, victim-f0, victim-f1-1, victim-f1-2, victim-f1-3)...
 cd /d "%~dp0simulation_lab"
 docker compose up -d
 
