@@ -328,10 +328,10 @@
   <div class="card-panel rounded-2xl p-5 mb-5 shadow-2xl border-t-4 border-indigo-500">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div>
-        <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center">
-          <i class="fa-solid fa-sitemap text-indigo-400 mr-2"></i> KỊCH BẢN THUYẾT TRÌNH BẢO VỆ: CHUỖI LÂY LAN NỘI BỘ (P0 ➔ F0 ➔ 3x F1)
+        <h2 id="scen-title" class="text-sm font-bold text-white uppercase tracking-wider flex items-center">
+          <i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> KỊCH BẢN TƯỜNG LỬA NIDS HỌC MÁY: CHẶN ĐỨNG BOTNET TẠI BƯỚC 2
         </h2>
-        <p class="text-xs text-gray-400 mt-0.5">Bấm lần lượt từ Bước 1 đến Bước 5 để minh họa sinh động kịch bản lây lan nội bộ và so sánh công nghệ.</p>
+        <p id="scen-sub" class="text-xs text-gray-400 mt-0.5">Do Tường lửa NIDS đã chặn đứng F0 ngay tại Bước 2, các bước 3, 4, 5 (Lây lan & DoS) bị triệt tiêu hoàn toàn!</p>
       </div>
       <div class="mt-2 md:mt-0 flex space-x-2">
         <button onclick="triggerScenario('normal')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
@@ -340,31 +340,31 @@
       </div>
     </div>
 
-    <!-- 5 Action Buttons -->
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-2.5 mb-4">
+    <!-- Action Buttons Grid (Adapts between 2 buttons for AI mode and 5 buttons for No Firewall mode) -->
+    <div id="scen-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
       
       <!-- BƯỚC 1 -->
-      <button id="btn-scen-1" onclick="triggerScenario('normal')" class="bg-emerald-950/70 hover:bg-emerald-900 border-2 border-emerald-500 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg">
+      <button id="btn-scen-1" onclick="triggerScenario('normal')" class="bg-emerald-950/70 hover:bg-emerald-900 border-2 border-emerald-500 p-3.5 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg">
         <div class="flex justify-between items-center">
           <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-600 text-white">BƯỚC 1</span>
           <span class="text-sm">🟢</span>
         </div>
-        <p class="text-xs font-bold text-emerald-300 mt-1.5">1. Mạng LAN Sạch</p>
-        <p class="text-[10px] text-gray-300 mt-0.5">4 máy nội bộ làm việc bình thường.</p>
+        <p class="text-xs font-bold text-emerald-300 mt-1.5">1. Mạng LAN Sạch (An toàn)</p>
+        <p class="text-[10px] text-gray-300 mt-0.5">Cả 4 máy nội bộ làm việc bình thường, chưa có mã độc.</p>
       </button>
 
       <!-- BƯỚC 2 -->
-      <button id="btn-scen-2" onclick="triggerScenario('f0_c2')" class="bg-slate-900/60 hover:bg-amber-950/60 border-2 border-slate-700 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg">
+      <button id="btn-scen-2" onclick="triggerScenario('f0_c2')" class="bg-slate-900/60 hover:bg-amber-950/60 border-2 border-slate-700 p-3.5 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg">
         <div class="flex justify-between items-center">
           <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-600 text-white">BƯỚC 2</span>
-          <span class="text-sm">🟡</span>
+          <span class="text-sm" id="btn-2-icon">🛡️</span>
         </div>
-        <p class="text-xs font-bold text-amber-300 mt-1.5">2. F0 Dính Botnet (Gọi C2)</p>
-        <p class="text-[10px] text-gray-300 mt-0.5">Tường lửa phát hiện & chặn sớm F0.</p>
+        <p class="text-xs font-bold text-amber-300 mt-1.5" id="btn-2-title">2. Tường Lửa NIDS Chặn Đứng F0</p>
+        <p class="text-[10px] text-gray-300 mt-0.5" id="btn-2-sub">Tự động phát hiện C2 và chặn sớm F0, bảo vệ 3 máy F1 an toàn 100%!</p>
       </button>
 
-      <!-- BƯỚC 3 -->
-      <button id="btn-scen-3" onclick="triggerScenario('spread')" class="bg-slate-900/60 hover:bg-purple-950/60 border-2 border-slate-700 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg">
+      <!-- BƯỚC 3 (ẨN Ở CHẾ ĐỘ TƯỜNG LỬA NIDS AI VÌ ĐÃ CHẶN ĐỨNG TẠI BƯỚC 2) -->
+      <button id="btn-scen-3" onclick="triggerScenario('spread')" class="bg-slate-900/60 hover:bg-purple-950/60 border-2 border-slate-700 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg" style="display: none;">
         <div class="flex justify-between items-center">
           <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-purple-600 text-white">BƯỚC 3</span>
           <span class="text-sm">🕷️</span>
@@ -373,8 +373,8 @@
         <p class="text-[10px] text-gray-300 mt-0.5">F0 bắn mã độc lây nát mạng LAN.</p>
       </button>
 
-      <!-- BƯỚC 4 -->
-      <button id="btn-scen-4" onclick="triggerScenario('attack')" class="bg-slate-900/60 hover:bg-red-950/60 border-2 border-slate-700 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg">
+      <!-- BƯỚC 4 (ẨN Ở CHẾ ĐỘ TƯỜNG LỬA NIDS AI VÌ ĐÃ CHẶN ĐỨNG TẠI BƯỚC 2) -->
+      <button id="btn-scen-4" onclick="triggerScenario('attack')" class="bg-slate-900/60 hover:bg-red-950/60 border-2 border-slate-700 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg" style="display: none;">
         <div class="flex justify-between items-center">
           <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-red-600 text-white">BƯỚC 4</span>
           <span class="text-sm">💥</span>
@@ -383,8 +383,8 @@
         <p class="text-[10px] text-gray-300 mt-0.5">Cả 4 máy xả bão DoS theo lệnh P0.</p>
       </button>
 
-      <!-- BƯỚC 5 -->
-      <button id="btn-scen-5" onclick="triggerStep5()" class="bg-slate-900/60 hover:bg-cyan-950/60 border-2 border-slate-700 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg">
+      <!-- BƯỚC 5 (ẨN Ở CHẾ ĐỘ TƯỜNG LỬA NIDS AI VÌ ĐÃ CHẶN ĐỨNG TẠI BƯỚC 2) -->
+      <button id="btn-scen-5" onclick="triggerStep5()" class="bg-slate-900/60 hover:bg-cyan-950/60 border-2 border-slate-700 p-3 rounded-xl text-left transition transform hover:-translate-y-0.5 shadow-lg" style="display: none;">
         <div class="flex justify-between items-center">
           <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-cyan-600 text-white">BƯỚC 5</span>
           <span class="text-sm">🛡️</span>
@@ -611,11 +611,11 @@
         speech: '"Kính thưa thầy cô, ở trạng thái ban đầu, cả 4 máy tính của các phòng ban trong mạng nội bộ công ty đều sạch. Mọi nhân viên làm việc và duyệt web an toàn."'
       },
       'f0_c2': {
-        badge: 'BƯỚC 2: TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN SỚM F0 (BẢO VỆ 3 MÁY F1)',
+        badge: 'BƯỚC 2: TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN ĐỨNG F0 (BẢO VỆ 3 MÁY F1)',
         badgeClass: 'bg-emerald-900 text-emerald-200 border border-emerald-600',
         phenomenon: 'Máy F0 (Kinh Doanh) dính mã độc và gửi Heartbeat 5.0s ngầm về P0 C2 Master. 3 máy phòng ban F1 vẫn an toàn.',
-        ai: '🛡️ TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN SỚM: Random Forest nhận diện chu kỳ 5.0s cố định và kích hoạt IPS cô lập F0 ngay tại Gateway. F0 bị chặn đứng, 3 máy F1 an toàn 100%!',
-        speech: '"Kính thưa thầy cô, ở bản chứa Tường lửa NIDS học máy, ngay khi máy F0 dính mã độc và gọi C2, Tường lửa AI đã nhận diện chu kỳ 5.0s bất thường và tự động chặn sớm F0. Nhờ đó, F0 bị cô lập hoàn toàn, không thể lây sang các máy F1, bảo vệ an toàn 100% cho các phòng ban khác!"'
+        ai: '🛡️ TƯỜNG LỬA NIDS CHẶN ĐỨNG BOTNET: Random Forest nhận diện chu kỳ 5.0s cố định và kích hoạt IPS cô lập F0 ngay lập tức tại Gateway. F0 bị chặn đứng, 3 máy F1 an toàn 100%. Chuỗi tấn công bị triệt tiêu hoàn toàn, các bước 3, 4, 5 (lây lan nội bộ và bão DoS) không thể xảy ra!',
+        speech: '"Kính thưa thầy cô, ở bản Tường lửa NIDS học máy, ngay khi máy F0 dính mã độc và gọi C2, Tường lửa AI đã nhận diện chu kỳ 5.0s bất thường và tự động cô lập F0 ngay tại Gateway. Nhờ đó, F0 bị chặn đứng hoàn toàn, không thể lây sang các máy F1 và không thể xả bão DoS. Toàn bộ chuỗi tấn công bị triệt tiêu ngay từ Bước 2, các bước 3, 4, 5 không còn cần thiết và không thể xảy ra, bảo vệ an toàn tuyệt đối 100% cho các phòng ban khác!"'
       },
       'spread': {
         badge: 'BƯỚC 3: F0 LÂY LAN MÃ ĐỘC SANG 3 MÁY F1 (LATERAL MOVEMENT)',
@@ -694,7 +694,11 @@
 
     function updateCheatsheetUI(step) {
       currentStep = step;
-      const data = (currentEngine === 'ai') ? stepDetailsAI[step] : stepDetailsLegacy[step];
+      let data = (currentEngine === 'ai') ? stepDetailsAI[step] : stepDetailsLegacy[step];
+      if (!data && currentEngine === 'ai') {
+        data = stepDetailsAI['f0_c2'];
+        currentStep = 'f0_c2';
+      }
       if (!data) return;
 
       const badge = document.getElementById('cs-badge');
@@ -706,25 +710,26 @@
       document.getElementById('cs-speech').innerText = data.speech;
 
       ['btn-scen-1', 'btn-scen-2', 'btn-scen-3', 'btn-scen-4', 'btn-scen-5'].forEach(id => {
-        document.getElementById(id).classList.remove('ring-2', 'ring-white', 'scale-105');
+        const b = document.getElementById(id);
+        if (b) b.classList.remove('ring-2', 'ring-white', 'scale-105');
       });
       const stepIdxMap = {'normal': 1, 'f0_c2': 2, 'spread': 3, 'attack': 4, 'block_f0': 5, 'block_all': 5};
-      const idx = stepIdxMap[step];
+      const idx = stepIdxMap[currentStep];
       if (idx) {
-        document.getElementById(`btn-scen-${idx}`).classList.add('ring-2', 'ring-white', 'scale-105');
+        const activeBtn = document.getElementById(`btn-scen-${idx}`);
+        if (activeBtn) activeBtn.classList.add('ring-2', 'ring-white', 'scale-105');
       }
 
       const btn5Title = document.getElementById('btn-5-title');
       const btn5Sub = document.getElementById('btn-5-sub');
-      if ((step === 'f0_c2' || step === 'block_f0') && currentEngine === 'ai') {
-        btn5Title.innerText = "5A. Chặn Sớm F0 (Bảo vệ F1)";
-        btn5Sub.innerText = "Dập mầm mống, 3 máy F1 an toàn 100%!";
-      } else if (step === 'attack' || step === 'spread' || step === 'block_all') {
-        btn5Title.innerText = "5B. Cô Lập Cả 4 Zombie";
-        btn5Sub.innerText = "Dập tắt khẩn cấp toàn bộ bão DoS!";
-      } else {
-        btn5Title.innerText = "5. Phòng Thủ / Cách Ly";
-        btn5Sub.innerText = "Dập tắt chuỗi lây, bảo vệ mạng.";
+      if (btn5Title && btn5Sub) {
+        if (step === 'attack' || step === 'spread' || step === 'block_all') {
+          btn5Title.innerText = "5. Rút Dây Mạng Khẩn Cấp";
+          btn5Sub.innerText = "Cắt đứt toàn bộ khi mạng đã sập!";
+        } else {
+          btn5Title.innerText = "5. Phòng Thủ / Cách Ly";
+          btn5Sub.innerText = "Hệ thống không tường lửa không có IPS.";
+        }
       }
     }
 
@@ -733,12 +738,54 @@
       const btnLegacy = document.getElementById('btn-engine-legacy');
       const btnAI = document.getElementById('btn-engine-ai');
 
+      const scenGrid = document.getElementById('scen-grid');
+      const btn3 = document.getElementById('btn-scen-3');
+      const btn4 = document.getElementById('btn-scen-4');
+      const btn5 = document.getElementById('btn-scen-5');
+      const scenTitle = document.getElementById('scen-title');
+      const scenSub = document.getElementById('scen-sub');
+      const btn2Title = document.getElementById('btn-2-title');
+      const btn2Sub = document.getElementById('btn-2-sub');
+      const btn2Icon = document.getElementById('btn-2-icon');
+
       if (engine === 'legacy') {
         btnLegacy.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-800 text-amber-300 border-amber-500 shadow-lg ring-2 ring-amber-400";
         btnAI.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-600";
+
+        // Hiện đủ 5 bước cho Bản Không Chứa Tường Lửa
+        if (btn3) btn3.style.display = 'block';
+        if (btn4) btn4.style.display = 'block';
+        if (btn5) btn5.style.display = 'block';
+        if (scenGrid) scenGrid.className = 'grid grid-cols-1 md:grid-cols-5 gap-2.5 mb-4';
+
+        if (scenTitle) scenTitle.innerHTML = '<i class="fa-solid fa-sitemap text-indigo-400 mr-2"></i> KỊCH BẢN BẢN KHÔNG CHỨA TƯỜNG LỬA: DIỄN TIẾN THẤT THỦ 5 HỒI';
+        if (scenSub) scenSub.innerText = 'Bấm lần lượt từ Bước 1 đến Bước 5 để minh họa chuỗi thảm họa botnet lây lan khi không có tường lửa bảo vệ.';
+
+        if (btn2Title) btn2Title.innerText = "2. F0 Dính Mã Độc (Bỏ Lọt C2)";
+        if (btn2Sub) btn2Sub.innerText = "Không tường lửa: F0 tự do gọi C2 về P0.";
+        if (btn2Icon) btn2Icon.innerText = "⚠️";
+
       } else {
         btnAI.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-emerald-950 text-emerald-200 border-emerald-500 shadow-lg ring-2 ring-emerald-400";
         btnLegacy.className = "px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-600";
+
+        // Ẩn bước 3, 4, 5 cho Tường Lửa NIDS Học Máy (vì đã chặn đứng ở Bước 2)
+        if (btn3) btn3.style.display = 'none';
+        if (btn4) btn4.style.display = 'none';
+        if (btn5) btn5.style.display = 'none';
+        if (scenGrid) scenGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 mb-4';
+
+        if (scenTitle) scenTitle.innerHTML = '<i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> KỊCH BẢN TƯỜNG LỬA NIDS HỌC MÁY: CHẶN ĐỨNG BOTNET TẠI BƯỚC 2';
+        if (scenSub) scenSub.innerText = 'Do Tường lửa NIDS đã chặn đứng F0 ngay tại Bước 2, các bước 3, 4, 5 (lây lan & DoS) đã bị triệt tiêu hoàn toàn!';
+
+        if (btn2Title) btn2Title.innerText = "2. Tường Lửa NIDS Chặn Đứng F0";
+        if (btn2Sub) btn2Sub.innerText = "F0 gọi C2 -> Tự động cô lập F0, 3 máy F1 an toàn 100%!";
+        if (btn2Icon) btn2Icon.innerText = "🛡️";
+
+        // Nếu đang ở bước 3, 4, hoặc 5 khi chuyển sang AI, tự chuyển về Bước 2
+        if (['spread', 'attack', 'block_f0', 'block_all'].includes(currentStep)) {
+          currentStep = 'f0_c2';
+        }
       }
 
       await fetch('/api/control/engine', {
@@ -1345,7 +1392,7 @@
       document.getElementById('modal-inspector').classList.add('hidden');
     }
 
-    updateCheatsheetUI('normal');
+    setDefenseEngine('ai');
     setInterval(updateDashboard, 1500);
     setInterval(updateLogs, 2000);
     updateDashboard();

@@ -107,13 +107,18 @@ async def toggle_defense_engine(request: Request):
             engine.stats_counter['active_c2_channel'] = True
             engine.add_log("KHÔNG TƯỜNG LỬA", "UNPROTECTED", "⚠️ Không có tường lửa: F0 tự do kết nối P0 C2 Master!", "orange")
     else:
-        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang: 🛡️ TƯỜNG LỬA NIDS HỌC MÁY (Phát hiện C2 & Chặn sớm F0 bảo vệ F1)", "green")
-        # If currently in Step 2, AI firewall immediately detects and blocks F0!
-        if active_mode == 'f0_c2':
+        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang: 🛡️ TƯỜNG LỬA NIDS HỌC MÁY (Phát hiện C2 & Chặn đứng F0 bảo vệ F1)", "green")
+        # In AI Firewall mode, steps 3, 4, 5 do not exist because F0 is blocked early!
+        if active_mode in ['f0_c2', 'spread', 'attack', 'block_f0', 'block_all']:
+            engine.stats_counter['active_mode'] = 'f0_c2'
+            engine.blocked_ips.clear()
             engine.blocked_ips.add('172.28.0.20')
             engine.workstations['f0']['status'] = 'blocked'
+            for b_id in ['f1_1', 'f1_2', 'f1_3']:
+                engine.workstations[b_id]['status'] = 'clean'
             engine.stats_counter['active_c2_channel'] = False
-            engine.add_log("TƯỜNG LỬA AI", "IPS-BLOCK", "🛡️ TƯỜNG LỬA NIDS ĐÃ PHÁT HIỆN C2 TỪ F0 -> CHẶN SỚM F0! 3 máy F1 an toàn 100%.", "green")
+            engine.stats_counter['attack_in_progress'] = False
+            engine.add_log("TƯỜNG LỬA AI", "IPS-BLOCK", "🛡️ TƯỜNG LỬA NIDS ĐÃ CHẶN ĐỨNG F0! 3 máy F1 an toàn 100% (Các bước 3, 4, 5 bị triệt tiêu).", "green")
     return {"status": "ok", "defense_engine": engine.defense_engine}
 
 @app.post("/api/control/scenario")
