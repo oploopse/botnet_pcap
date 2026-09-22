@@ -175,98 +175,118 @@
           </filter>
         </defs>
 
-        <!-- ================= SECTION A: COMPANY INTRANET LAN (Left) ================= -->
+        <!-- ================= SECTION A: COMPANY INTRANET LAN (Stacked List) ================= -->
         <g id="group-lan">
           <!-- Big LAN Enclosure -->
-          <rect x="16" y="14" width="456" height="286" rx="14" fill="url(#lanGradient)" stroke="#334155" stroke-width="2" stroke-dasharray="6,4" />
-          <text x="30" y="36" font-size="10.5" font-weight="bold" fill="#38bdf8" letter-spacing="1">🏢 MẠNG NỘI BỘ CÔNG TY (INTRANET LAN - 172.28.0.0/24)</text>
+          <rect x="16" y="14" width="314" height="286" rx="14" fill="url(#lanGradient)" stroke="#334155" stroke-width="2" stroke-dasharray="6,4" />
+          <text x="28" y="33" font-size="10" font-weight="bold" fill="#38bdf8" letter-spacing="1">🏢 MẠNG LAN NỘI BỘ (172.28.0.0/24)</text>
 
-          <!-- Lateral Infection Wires from F0 to F1-1, F1-2, F1-3 -->
-          <path id="wire-f0-f1-1" d="M 231 105 L 253 105" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none" />
-          <path id="wire-f0-f1-2" d="M 128 162 L 128 172" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none" />
-          <path id="wire-f0-f1-3" d="M 231 162 L 253 172" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none" />
+          <!-- Internal Lateral Infection Bus (F0 spreading downwards to F1s on left) -->
+          <path d="M 28 71.5 L 20 71.5 L 20 257.5 L 28 257.5" stroke="#1e293b" stroke-width="3" fill="none" stroke-linecap="round" />
+          <path id="wire-f0-f1-1" d="M 28 71.5 L 20 71.5 L 20 133.5 L 28 133.5" class="flow-idle" fill="none" stroke-linecap="round" />
+          <path id="wire-f0-f1-2" d="M 20 133.5 L 20 195.5 L 28 195.5" class="flow-idle" fill="none" stroke-linecap="round" />
+          <path id="wire-f0-f1-3" d="M 20 195.5 L 20 257.5 L 28 257.5" class="flow-idle" fill="none" stroke-linecap="round" />
 
-          <!-- NODE F0 (NV KINH DOANH - Top Left) -->
-          <g id="node-f0" transform="translate(26, 48)">
-            <rect id="rect-f0" width="205" height="114" rx="10" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
-            <text x="12" y="24" font-size="16">💻</text>
-            <text x="34" y="20" font-size="10.5" font-weight="bold" fill="#ffffff">F0: KINH DOANH</text>
-            <text x="34" y="32" font-size="8.5" fill="#93c5fd">NV Phòng Kinh Doanh</text>
-            <text x="12" y="48" font-size="8.5" font-family="monospace" fill="#60a5fa">IP: 172.28.0.20</text>
-            <line x1="10" y1="54" x2="195" y2="54" stroke="#1e293b" stroke-width="1" />
-            <rect id="box-f0" x="10" y="60" width="185" height="44" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
-            <text id="lbl-f0-status" x="102" y="78" font-size="8.5" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH (AN TOÀN)</text>
-            <text id="lbl-f0-sub" x="102" y="93" font-size="7.5" fill="#94a3b8" text-anchor="middle">Đang làm việc bình thường</text>
+          <!-- NODE F0 (NV KINH DOANH - Hàng 1) -->
+          <g id="node-f0" transform="translate(28, 44)">
+            <rect id="rect-f0" width="286" height="55" rx="9" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
+            <text x="12" y="34" font-size="18">💻</text>
+            <text x="36" y="23" font-size="10.5" font-weight="bold" fill="#ffffff">F0: KINH DOANH</text>
+            <text x="36" y="40" font-size="8.5" fill="#93c5fd">NV Kinh Doanh • <tspan fill="#60a5fa" font-family="monospace">172.28.0.20</tspan></text>
+            <rect id="box-f0" x="180" y="8" width="96" height="39" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
+            <text id="lbl-f0-status" x="228" y="24" font-size="8" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH</text>
+            <text id="lbl-f0-sub" x="228" y="37" font-size="7" fill="#94a3b8" text-anchor="middle">Duyệt web bình thường</text>
           </g>
 
-          <!-- NODE F1-1 (NV KẾ TOÁN - Top Right) -->
-          <g id="node-f1-1" transform="translate(253, 48)">
-            <rect id="rect-f1-1" width="205" height="114" rx="10" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
-            <text x="12" y="24" font-size="16">🖥️</text>
-            <text x="34" y="20" font-size="10.5" font-weight="bold" fill="#ffffff">F1-1: KẾ TOÁN</text>
-            <text x="34" y="32" font-size="8.5" fill="#93c5fd">NV Phòng Kế Toán</text>
-            <text x="12" y="48" font-size="8.5" font-family="monospace" fill="#60a5fa">IP: 172.28.0.21</text>
-            <line x1="10" y1="54" x2="195" y2="54" stroke="#1e293b" stroke-width="1" />
-            <rect id="box-f1-1" x="10" y="60" width="185" height="44" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
-            <text id="lbl-f1-1" x="102" y="78" font-size="8.5" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH (AN TOÀN)</text>
-            <text id="lbl-f1-1-sub" x="102" y="93" font-size="7.5" fill="#94a3b8" text-anchor="middle">Duyệt hóa đơn/web</text>
+          <!-- NODE F1-1 (NV KẾ TOÁN - Hàng 2) -->
+          <g id="node-f1-1" transform="translate(28, 106)">
+            <rect id="rect-f1-1" width="286" height="55" rx="9" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
+            <text x="12" y="34" font-size="18">🖥️</text>
+            <text x="36" y="23" font-size="10.5" font-weight="bold" fill="#ffffff">F1-1: KẾ TOÁN</text>
+            <text x="36" y="40" font-size="8.5" fill="#93c5fd">NV Phòng Kế Toán • <tspan fill="#60a5fa" font-family="monospace">172.28.0.21</tspan></text>
+            <rect id="box-f1-1" x="180" y="8" width="96" height="39" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
+            <text id="lbl-f1-1" x="228" y="24" font-size="8" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH</text>
+            <text id="lbl-f1-1-sub" x="228" y="37" font-size="7" fill="#94a3b8" text-anchor="middle">Duyệt hóa đơn/web</text>
           </g>
 
-          <!-- NODE F1-2 (NV NHÂN SỰ - Bottom Left) -->
-          <g id="node-f1-2" transform="translate(26, 172)">
-            <rect id="rect-f1-2" width="205" height="114" rx="10" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
-            <text x="12" y="24" font-size="16">🖥️</text>
-            <text x="34" y="20" font-size="10.5" font-weight="bold" fill="#ffffff">F1-2: NHÂN SỰ</text>
-            <text x="34" y="32" font-size="8.5" fill="#93c5fd">NV Phòng Nhân Sự</text>
-            <text x="12" y="48" font-size="8.5" font-family="monospace" fill="#60a5fa">IP: 172.28.0.22</text>
-            <line x1="10" y1="54" x2="195" y2="54" stroke="#1e293b" stroke-width="1" />
-            <rect id="box-f1-2" x="10" y="60" width="185" height="44" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
-            <text id="lbl-f1-2" x="102" y="78" font-size="8.5" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH (AN TOÀN)</text>
-            <text id="lbl-f1-2-sub" x="102" y="93" font-size="7.5" fill="#94a3b8" text-anchor="middle">Quản lý hồ sơ nhân sự</text>
+          <!-- NODE F1-2 (NV NHÂN SỰ - Hàng 3) -->
+          <g id="node-f1-2" transform="translate(28, 168)">
+            <rect id="rect-f1-2" width="286" height="55" rx="9" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
+            <text x="12" y="34" font-size="18">🖥️</text>
+            <text x="36" y="23" font-size="10.5" font-weight="bold" fill="#ffffff">F1-2: NHÂN SỰ</text>
+            <text x="36" y="40" font-size="8.5" fill="#93c5fd">NV Phòng Nhân Sự • <tspan fill="#60a5fa" font-family="monospace">172.28.0.22</tspan></text>
+            <rect id="box-f1-2" x="180" y="8" width="96" height="39" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
+            <text id="lbl-f1-2" x="228" y="24" font-size="8" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH</text>
+            <text id="lbl-f1-2-sub" x="228" y="37" font-size="7" fill="#94a3b8" text-anchor="middle">Quản lý hồ sơ</text>
           </g>
 
-          <!-- NODE F1-3 (NV KỸ THUẬT - Bottom Right) -->
-          <g id="node-f1-3" transform="translate(253, 172)">
-            <rect id="rect-f1-3" width="205" height="114" rx="10" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
-            <text x="12" y="24" font-size="16">🖥️</text>
-            <text x="34" y="20" font-size="10.5" font-weight="bold" fill="#ffffff">F1-3: KỸ THUẬT</text>
-            <text x="34" y="32" font-size="8.5" fill="#93c5fd">NV Phòng Kỹ Thuật</text>
-            <text x="12" y="48" font-size="8.5" font-family="monospace" fill="#60a5fa">IP: 172.28.0.23</text>
-            <line x1="10" y1="54" x2="195" y2="54" stroke="#1e293b" stroke-width="1" />
-            <rect id="box-f1-3" x="10" y="60" width="185" height="44" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
-            <text id="lbl-f1-3" x="102" y="78" font-size="8.5" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH (AN TOÀN)</text>
-            <text id="lbl-f1-3-sub" x="102" y="93" font-size="7.5" fill="#94a3b8" text-anchor="middle">Lập trình/dev nội bộ</text>
+          <!-- NODE F1-3 (NV KỸ THUẬT - Hàng 4) -->
+          <g id="node-f1-3" transform="translate(28, 230)">
+            <rect id="rect-f1-3" width="286" height="55" rx="9" fill="#0f172a" fill-opacity="0.8" stroke="#10b981" stroke-width="1.8" />
+            <text x="12" y="34" font-size="18">🖥️</text>
+            <text x="36" y="23" font-size="10.5" font-weight="bold" fill="#ffffff">F1-3: KỸ THUẬT</text>
+            <text x="36" y="40" font-size="8.5" fill="#93c5fd">NV Phòng Kỹ Thuật • <tspan fill="#60a5fa" font-family="monospace">172.28.0.23</tspan></text>
+            <rect id="box-f1-3" x="180" y="8" width="96" height="39" rx="6" fill="#020617" stroke="#1e293b" stroke-width="1" />
+            <text id="lbl-f1-3" x="228" y="24" font-size="8" font-weight="bold" fill="#34d399" text-anchor="middle">🟢 SẠCH</text>
+            <text id="lbl-f1-3-sub" x="228" y="37" font-size="7" fill="#94a3b8" text-anchor="middle">Lập trình/dev nội bộ</text>
           </g>
         </g>
 
-        <!-- ================= MAIN UPLINK WIRES (LAN -> Gateway) ================= -->
-        <line x1="472" y1="157" x2="570" y2="157" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
-        <line id="wire-lan-gw" x1="472" y1="157" x2="570" y2="157" class="flow-normal" stroke-linecap="round" />
+        <!-- ================= FORK STRUCTURE: 4 PRONGS CONVERGING TO ML GATEWAY ================= -->
+        <!-- Background guide lines for the fork prongs -->
+        <path d="M 314 71.5 C 385 71.5, 420 164.5, 475 164.5" stroke="#1e293b" stroke-width="3.5" fill="none" stroke-linecap="round" />
+        <path d="M 314 133.5 C 375 133.5, 420 164.5, 475 164.5" stroke="#1e293b" stroke-width="3.5" fill="none" stroke-linecap="round" />
+        <path d="M 314 195.5 C 375 195.5, 420 164.5, 475 164.5" stroke="#1e293b" stroke-width="3.5" fill="none" stroke-linecap="round" />
+        <path d="M 314 257.5 C 385 257.5, 420 164.5, 475 164.5" stroke="#1e293b" stroke-width="3.5" fill="none" stroke-linecap="round" />
 
-        <!-- Block indicator on main wire -->
+        <!-- 4 Animated flow wires (The 4 Prongs of the Fork) -->
+        <path id="wire-f0-gw" d="M 314 71.5 C 385 71.5, 420 164.5, 475 164.5" class="flow-normal" fill="none" stroke-linecap="round" />
+        <path id="wire-f1_1-gw" d="M 314 133.5 C 375 133.5, 420 164.5, 475 164.5" class="flow-normal" fill="none" stroke-linecap="round" />
+        <path id="wire-f1_2-gw" d="M 314 195.5 C 375 195.5, 420 164.5, 475 164.5" class="flow-normal" fill="none" stroke-linecap="round" />
+        <path id="wire-f1_3-gw" d="M 314 257.5 C 385 257.5, 420 164.5, 475 164.5" class="flow-normal" fill="none" stroke-linecap="round" />
+
+        <!-- Fork Convergence Node (Fan-In Junction) -->
+        <circle cx="475" cy="164.5" r="7" fill="#0284c7" stroke="#38bdf8" stroke-width="2" filter="url(#glow)" />
+        <text x="475" y="152" font-size="8" font-weight="bold" fill="#38bdf8" text-anchor="middle">HỘI TỤ (FAN-IN)</text>
+
+        <!-- Main Trunk (Stem/Handle of the Fork into ML Gateway) -->
+        <line x1="475" y1="164.5" x2="560" y2="164.5" stroke="#1e293b" stroke-width="6" stroke-linecap="round" />
+        <line id="wire-lan-gw" x1="475" y1="164.5" x2="560" y2="164.5" class="flow-normal" stroke-linecap="round" />
+
+        <!-- Early Block Indicator on F0 Prong -->
+        <g id="block-f0-indicator" style="display: none;">
+          <circle cx="395" cy="108" r="12" fill="#a855f7" stroke="#ffffff" stroke-width="1.5" filter="url(#glow)" />
+          <text x="395" y="112" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">🚫</text>
+          <text x="395" y="128" font-size="7" font-weight="bold" fill="#c084fc" text-anchor="middle">CÔ LẬP F0</text>
+        </g>
+
+        <!-- Main Block indicator on trunk wire -->
         <g id="block-indicator" style="display: none;">
-          <circle cx="521" cy="157" r="16" fill="#ef4444" stroke="#ffffff" stroke-width="2" filter="url(#glow)" />
-          <text x="521" y="162" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">🚫</text>
-          <text x="521" y="190" font-size="9" font-weight="bold" fill="#f87171" text-anchor="middle">ĐÃ CÔ LẬP</text>
+          <circle cx="518" cy="164.5" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" filter="url(#glow)" />
+          <text x="518" y="169.5" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">🚫</text>
+          <text x="518" y="194" font-size="8" font-weight="bold" fill="#f87171" text-anchor="middle">ĐÃ CÔ LẬP</text>
         </g>
 
         <!-- ================= SECTION B: GATEWAY AI NIDS (Center) ================= -->
-        <g id="node-gateway" transform="translate(570, 45)">
-          <rect id="gw-card-rect" width="220" height="230" rx="16" fill="url(#gwGradient)" stroke="#10b981" stroke-width="2.5" filter="url(#glow)" />
+        <g id="node-gateway" transform="translate(560, 40)">
+          <rect id="gw-card-rect" width="230" height="245" rx="16" fill="url(#gwGradient)" stroke="#10b981" stroke-width="2.5" filter="url(#glow)" />
           <text x="20" y="34" font-size="22">🛡️</text>
-          <text id="gw-title" x="55" y="28" font-size="13" font-weight="bold" fill="#34d399">CỔNG AN NINH AI NIDS</text>
-          <text x="55" y="44" font-size="11" font-family="monospace" fill="#a7f3d0">172.28.0.10:8501</text>
-          <line x1="15" y1="58" x2="205" y2="58" stroke="#065f46" stroke-width="1" />
+          <text id="gw-title" x="55" y="28" font-size="12.5" font-weight="bold" fill="#34d399">CỔNG HỌC MÁY (ML NIDS)</text>
+          <text x="55" y="44" font-size="10.5" font-family="monospace" fill="#a7f3d0">172.28.0.10:8501</text>
+          <line x1="15" y1="56" x2="215" y2="56" stroke="#065f46" stroke-width="1" />
           
-          <text id="gw-spec-1" x="20" y="80" font-size="10.5" fill="#e2e8f0">🤖 Mô hình: <tspan font-weight="bold" fill="#38bdf8">Random Forest</tspan></text>
-          <text id="gw-spec-2" x="20" y="100" font-size="10.5" fill="#e2e8f0">🌲 Quy mô: <tspan font-weight="bold" fill="#a7f3d0">100 Cây quyết định</tspan></text>
-          <text id="gw-spec-3" x="20" y="120" font-size="10.5" fill="#e2e8f0">📊 Đặc trưng: <tspan font-weight="bold" fill="#fbbf24">57 CICFlowMeter</tspan></text>
-          <text id="gw-spec-4" x="20" y="140" font-size="10.5" fill="#e2e8f0">⚡ Soi cả LAN &amp; Internet</text>
-          <text id="gw-spec-5" x="20" y="160" font-size="10.5" fill="#cbd5e1">Quân số Zombie: <tspan id="gw-zombie-count" font-weight="bold" fill="#34d399">0 / 4 máy</tspan></text>
+          <text id="gw-spec-1" x="20" y="78" font-size="10" fill="#e2e8f0">🤖 Mô hình: <tspan font-weight="bold" fill="#38bdf8">Random Forest</tspan></text>
+          <text id="gw-spec-2" x="20" y="98" font-size="10" fill="#e2e8f0">🌲 Quy mô: <tspan font-weight="bold" fill="#a7f3d0">100 Cây quyết định</tspan></text>
+          <text id="gw-spec-3" x="20" y="118" font-size="10" fill="#e2e8f0">📊 Đặc trưng: <tspan font-weight="bold" fill="#fbbf24">57 CICFlowMeter</tspan></text>
+          <text id="gw-spec-4" x="20" y="138" font-size="10" fill="#e2e8f0">⚡ Soi toàn bộ lưu lượng Mạng</text>
+          <text id="gw-spec-5" x="20" y="158" font-size="10" fill="#cbd5e1">Quân số Zombie: <tspan id="gw-zombie-count" font-weight="bold" fill="#34d399">0 / 4 máy</tspan></text>
 
-          <rect x="15" y="180" width="190" height="34" rx="6" fill="#022c22" stroke="#047857" />
-          <text id="gw-decision-text" x="110" y="201" font-size="10" font-weight="bold" fill="#34d399" text-anchor="middle">
+          <rect x="15" y="180" width="200" height="48" rx="6" fill="#022c22" stroke="#047857" />
+          <text id="gw-decision-text" x="115" y="200" font-size="9" font-weight="bold" fill="#34d399" text-anchor="middle">
             CHẾ ĐỘ: GIÁM SÁT THỜI GIAN THỰC
+          </text>
+          <text id="gw-decision-sub" x="115" y="216" font-size="7.5" fill="#a7f3d0" text-anchor="middle">
+            Thuật toán ML tự động phân loại từng luồng
           </text>
         </g>
 
@@ -744,6 +764,12 @@
       const wireF1_2 = document.getElementById('wire-f0-f1-2');
       const wireF1_3 = document.getElementById('wire-f0-f1-3');
 
+      const wireF0Gw = document.getElementById('wire-f0-gw');
+      const wireF1_1Gw = document.getElementById('wire-f1_1-gw');
+      const wireF1_2Gw = document.getElementById('wire-f1_2-gw');
+      const wireF1_3Gw = document.getElementById('wire-f1_3-gw');
+      const blockF0Ind = document.getElementById('block-f0-indicator');
+
       const topoBadge = document.getElementById('topo-badge');
       const rectF0 = document.getElementById('rect-f0');
       const txtF0State = document.getElementById('txt-f0-state');
@@ -878,24 +904,65 @@
       let f1_3Sub = isAttack ? 'Tấn công làm sập mạng' : (f1_3Infected ? 'Bị F0 lây nhiễm qua LAN' : 'Lập trình/dev nội bộ');
       applyWorkstationCard('rect-f1-3', 'box-f1-3', 'lbl-f1-3', 'lbl-f1-3-sub', f1_3Blocked, f1_3Infected, isAttack, f1_3Title, f1_3Sub);
 
-      // Manage Wires & Indicators
+      // Manage Wires & Indicators for Fork Structure (Cấu trúc hình dĩa)
       if (isBlocked) {
-        blockInd.style.display = 'block';
-        wireLanGw.className.baseVal = 'flow-idle';
-        wireGwC2.className.baseVal = 'flow-idle';
-        wireGwWeb.className.baseVal = 'flow-idle';
-        wireF1_1.className.baseVal = 'flow-idle';
-        wireF1_2.className.baseVal = 'flow-idle';
-        wireF1_3.className.baseVal = 'flow-idle';
+        if (f0Blocked && !f1_1Blocked) {
+          // Early Defense: Only F0 is isolated at Gateway!
+          blockInd.style.display = 'none';
+          if (blockF0Ind) blockF0Ind.style.display = 'block';
 
-        topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-purple-950 text-purple-300 border border-purple-700';
-        topoBadge.innerHTML = (f0Blocked && !f1_1Blocked) ? '🛡️ PHÒNG THỦ SỚM: ĐÃ CÔ LẬP F0 (3 MÁY F1 AN TOÀN 100%)' : '🛑 ĐÃ CÔ LẬP MÃ ĐỘC TẠI GATEWAY';
-        gwDecision.innerText = 'IPS: ĐÃ CÔ LẬP ZOMBIE TẠI GATEWAY';
-        gwDecision.setAttribute('fill', '#c084fc');
-        p0CmdVal.innerText = 'MẤT KẾT NỐI';
+          if (wireF0Gw) wireF0Gw.className.baseVal = 'flow-idle';
+          if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-normal';
+          if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-normal';
+          if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-normal';
+
+          wireLanGw.className.baseVal = 'flow-normal';
+          wireGwC2.className.baseVal = 'flow-idle';
+          wireGwWeb.className.baseVal = 'flow-normal';
+
+          wireF1_1.className.baseVal = 'flow-idle';
+          wireF1_2.className.baseVal = 'flow-idle';
+          wireF1_3.className.baseVal = 'flow-idle';
+
+          topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-purple-950 text-purple-300 border border-purple-700';
+          topoBadge.innerHTML = '🛡️ PHÒNG THỦ SỚM: ĐÃ CÔ LẬP F0 (3 MÁY F1 AN TOÀN 100%)';
+          gwDecision.innerText = 'IPS: CÔ LẬP F0 • BẢO VỆ 3 MÁY F1';
+          gwDecision.setAttribute('fill', '#34d399');
+          p0CmdVal.innerText = 'MẤT KẾT NỐI F0';
+        } else {
+          // Full Lockdown
+          blockInd.style.display = 'block';
+          if (blockF0Ind) blockF0Ind.style.display = 'none';
+
+          if (wireF0Gw) wireF0Gw.className.baseVal = 'flow-idle';
+          if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-idle';
+          if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-idle';
+          if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-idle';
+
+          wireLanGw.className.baseVal = 'flow-idle';
+          wireGwC2.className.baseVal = 'flow-idle';
+          wireGwWeb.className.baseVal = 'flow-idle';
+
+          wireF1_1.className.baseVal = 'flow-idle';
+          wireF1_2.className.baseVal = 'flow-idle';
+          wireF1_3.className.baseVal = 'flow-idle';
+
+          topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-purple-950 text-purple-300 border border-purple-700';
+          topoBadge.innerHTML = '🛑 ĐÃ CÔ LẬP MÃ ĐỘC TẠI GATEWAY';
+          gwDecision.innerText = 'IPS: ĐÃ CÔ LẬP ZOMBIE TẠI GATEWAY';
+          gwDecision.setAttribute('fill', '#c084fc');
+          p0CmdVal.innerText = 'MẤT KẾT NỐI';
+        }
 
       } else if (isAttack) {
         blockInd.style.display = 'none';
+        if (blockF0Ind) blockF0Ind.style.display = 'none';
+
+        if (wireF0Gw) wireF0Gw.className.baseVal = 'flow-attack';
+        if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-attack';
+        if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-attack';
+        if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-attack';
+
         wireLanGw.className.baseVal = 'flow-attack';
         wireGwC2.className.baseVal = 'flow-beacon';
         wireGwWeb.className.baseVal = 'flow-normal';
@@ -914,6 +981,14 @@
 
       } else if (isSpread) {
         blockInd.style.display = 'none';
+        if (blockF0Ind) blockF0Ind.style.display = 'none';
+
+        // 4 prongs carry spreading traffic into ML
+        if (wireF0Gw) wireF0Gw.className.baseVal = 'flow-spread';
+        if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-spread';
+        if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-spread';
+        if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-spread';
+
         wireLanGw.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
         wireGwC2.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
         wireGwWeb.className.baseVal = 'flow-normal';
@@ -932,6 +1007,14 @@
 
       } else if (isF0C2) {
         blockInd.style.display = 'none';
+        if (blockF0Ind) blockF0Ind.style.display = 'none';
+
+        // Only F0 prong is active C2 beacon; F1s browse web normally
+        if (wireF0Gw) wireF0Gw.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
+        if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-normal';
+        if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-normal';
+        if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-normal';
+
         wireLanGw.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
         wireGwC2.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
         wireGwWeb.className.baseVal = 'flow-normal';
@@ -951,6 +1034,13 @@
       } else {
         // All Normal
         blockInd.style.display = 'none';
+        if (blockF0Ind) blockF0Ind.style.display = 'none';
+
+        if (wireF0Gw) wireF0Gw.className.baseVal = 'flow-normal';
+        if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-normal';
+        if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-normal';
+        if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-normal';
+
         wireLanGw.className.baseVal = 'flow-normal';
         wireGwC2.className.baseVal = 'flow-idle';
         wireGwWeb.className.baseVal = 'flow-normal';
