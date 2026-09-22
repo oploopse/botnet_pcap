@@ -23,15 +23,15 @@ services:
       - c2-server
     restart: unless-stopped
 
-  # Máy F0: Nạn nhân ban đầu (Patient Zero)
+  # Máy F0: Nạn nhân ban đầu (NV Phòng Kinh Doanh)
   victim-f0:
     build: ./victim_zombie
     container_name: victim-f0
     hostname: victim-f0
     environment:
       - NODE_ID=f0
-      - ROLE=PatientZero
-      - DEVICE_NAME=Máy F0 (Nạn nhân gốc)
+      - ROLE=NV-KinhDoanh
+      - DEVICE_NAME=Máy F0 (Kinh Doanh)
       - IP_ADDRESS=172.28.0.20
     networks:
       botnet_sim_net:

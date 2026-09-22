@@ -123,7 +123,7 @@ async def handle_scenario(request: Request):
         engine.stats_counter['active_c2_channel'] = False
         engine.last_attack_time = 0
         engine.last_beacon_time = 0
-        engine.add_log("KỊCH BẢN", "STEP-1", "Hồi 1: Toàn bộ mạng nội bộ an toàn. Cả 4 máy F0, F1-1, F1-2, F1-3 đều sạch.", "green")
+        engine.add_log("KỊCH BẢN", "STEP-1", "Hồi 1: Toàn bộ mạng nội bộ an toàn. Cả 4 máy phòng ban F0 (Kinh Doanh), F1-1 (Kế toán), F1-2 (Nhân sự), F1-3 (Kỹ thuật) đều sạch.", "green")
 
     elif mode == 'f0_c2':
         # F0 connects to P0 C2 Server
@@ -131,7 +131,7 @@ async def handle_scenario(request: Request):
         engine.workstations['f0']['status'] = 'infected'
         engine.stats_counter['active_c2_channel'] = True
         engine.stats_counter['attack_in_progress'] = False
-        engine.add_log("KỊCH BẢN", "STEP-2", "Hồi 2: F0 dính mã độc từ Internet, gửi Heartbeat 5.0s về P0 (C2 Server ngoài). 3 máy F1 vẫn an toàn.", "orange")
+        engine.add_log("KỊCH BẢN", "STEP-2", "Hồi 2: F0 (NV Kinh Doanh) dính mã độc từ Internet, gửi Heartbeat 5.0s về P0 (C2 Master ngoài). 3 máy phòng ban F1 vẫn an toàn.", "orange")
 
     elif mode == 'spread':
         # F0 initiates lateral movement to infect F1-1, F1-2, F1-3
@@ -140,7 +140,7 @@ async def handle_scenario(request: Request):
         for b_id in ['f0', 'f1_1', 'f1_2', 'f1_3']:
             engine.workstations[b_id]['status'] = 'infected'
         engine.stats_counter['active_c2_channel'] = True
-        engine.add_log("KỊCH BẢN", "STEP-3", "Hồi 3: F0 quét mạng LAN nội bộ và lây nhiễm sang 3 máy F1! Đội quân 4 Zombie hình thành.", "purple")
+        engine.add_log("KỊCH BẢN", "STEP-3", "Hồi 3: F0 (Kinh Doanh) quét mạng LAN nội bộ và lây nhiễm sang 3 máy phòng ban F1! Đội quân 4 Zombie hình thành.", "purple")
 
     elif mode == 'attack':
         # Instruct P0 to issue attack command
@@ -159,12 +159,12 @@ async def handle_scenario(request: Request):
         engine.add_log("KỊCH BẢN", "STEP-4", "Hồi 4: P0 phát lệnh tổng tấn công! Cả 4 Zombie (F0 + 3xF1) đồng loạt xả bão gói DoS!", "red")
 
     elif mode == 'block_f0':
-        # Early Defense: Block Patient Zero F0 (172.28.0.20)
+        # Early Defense: Block F0 (172.28.0.20)
         engine.blocked_ips.add('172.28.0.20')
         engine.workstations['f0']['status'] = 'blocked'
         # Disinfect F1s if they were clean
         engine.stats_counter['attack_in_progress'] = False
-        engine.add_log("PHÒNG THỦ AI", "EARLY-BLOCK", "🛡️ KÍCH HOẠT PHÒNG THỦ SỚM: Đã cô lập F0 (172.28.0.20) tại Gateway! 3 máy F1 được bảo vệ an toàn 100%.", "green")
+        engine.add_log("PHÒNG THỦ AI", "EARLY-BLOCK", "🛡️ KÍCH HOẠT PHÒNG THỦ SỚM: Đã cô lập F0 (NV Kinh Doanh - 172.28.0.20) tại Gateway! 3 máy phòng ban F1 được bảo vệ an toàn 100%.", "green")
 
     elif mode == 'block_all':
         # Full containment: Block all 4 infected machines

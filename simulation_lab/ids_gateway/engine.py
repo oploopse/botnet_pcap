@@ -19,10 +19,10 @@ blocked_ips = set()
 
 # Enterprise LAN Workstations status tracker
 workstations = {
-    'f0': {'id': 'f0', 'ip': '172.28.0.20', 'name': 'Máy F0 (Patient Zero)', 'role': 'Nạn nhân gốc', 'dept': 'Ban Giám Đốc', 'status': 'clean'},
-    'f1_1': {'id': 'f1_1', 'ip': '172.28.0.21', 'name': 'Máy F1-1 (Kế toán)', 'role': 'Đồng nghiệp LAN', 'dept': 'Phòng Kế Toán', 'status': 'clean'},
-    'f1_2': {'id': 'f1_2', 'ip': '172.28.0.22', 'name': 'Máy F1-2 (Nhân sự)', 'role': 'Đồng nghiệp LAN', 'dept': 'Phòng Nhân Sự', 'status': 'clean'},
-    'f1_3': {'id': 'f1_3', 'ip': '172.28.0.23', 'name': 'Máy F1-3 (Kỹ thuật)', 'role': 'Đồng nghiệp LAN', 'dept': 'Phòng Kỹ Thuật', 'status': 'clean'}
+    'f0': {'id': 'f0', 'ip': '172.28.0.20', 'name': 'Máy F0 (Kinh Doanh)', 'role': 'NV Kinh Doanh', 'dept': 'Phòng Kinh Doanh', 'status': 'clean'},
+    'f1_1': {'id': 'f1_1', 'ip': '172.28.0.21', 'name': 'Máy F1-1 (Kế toán)', 'role': 'NV Kế Toán', 'dept': 'Phòng Kế Toán', 'status': 'clean'},
+    'f1_2': {'id': 'f1_2', 'ip': '172.28.0.22', 'name': 'Máy F1-2 (Nhân sự)', 'role': 'NV Nhân Sự', 'dept': 'Phòng Nhân Sự', 'status': 'clean'},
+    'f1_3': {'id': 'f1_3', 'ip': '172.28.0.23', 'name': 'Máy F1-3 (Kỹ thuật)', 'role': 'NV Kỹ Thuật', 'dept': 'Phòng Kỹ Thuật', 'status': 'clean'}
 }
 
 ip_to_bot = {
