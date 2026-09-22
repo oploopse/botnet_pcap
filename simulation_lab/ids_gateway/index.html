@@ -74,35 +74,6 @@
 </head>
 <body class="p-3 md:p-6 min-h-screen">
 
-  <!-- ============================================================== -->
-  <!-- 1. TOP HEADER: THƯƠNG HIỆU ĐỒ ÁN HUCE -->
-  <!-- ============================================================== -->
-  <header class="card-panel rounded-2xl p-4 md:p-5 mb-5 shadow-2xl border border-blue-900/60 flex flex-col md:flex-row justify-between items-center">
-    <div class="flex items-center space-x-4 mb-3 md:mb-0">
-      <div class="w-14 h-14 bg-gradient-to-br from-blue-700 to-indigo-900 border-2 border-blue-400 rounded-xl flex flex-col items-center justify-center font-black text-xl text-white shadow-lg">
-        <span>HUCE</span>
-        <span class="text-[9px] text-blue-200 tracking-wider">CNTT</span>
-      </div>
-      <div>
-        <div class="flex items-center space-x-2">
-          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-900/80 text-blue-300 border border-blue-600">ĐỒ ÁN TỐT NGHIỆP</span>
-          <h1 class="text-base md:text-lg font-bold text-white tracking-wide">PHÁT HIỆN BOTNET & LÂY NHIỄM NỘI BỘ (LATERAL MOVEMENT) BẰNG HỌC MÁY</h1>
-        </div>
-        <p class="text-xs text-blue-300 mt-1">Trường Đại học Xây dựng Hà Nội • Khoa Công nghệ Thông tin</p>
-      </div>
-    </div>
-    
-    <div class="flex items-center space-x-5">
-      <div class="text-right">
-        <p class="text-xs text-amber-300 font-semibold"><i class="fa-solid fa-chalkboard-user mr-1"></i> GVHD: ThS. Nguyễn Việt Nhật</p>
-        <p class="text-[11px] text-gray-300 mt-0.5">Nhóm SV: N.B.Hùng, N.D.Hùng, L.Q.Huy, N.X.Trung, B.Đ.Thắng</p>
-      </div>
-      <div class="bg-gray-950/80 px-3.5 py-2 rounded-xl border border-cyan-800/80 text-sm font-mono text-cyan-400 flex items-center shadow-inner">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping mr-2.5"></span>
-        <span id="live-clock">00:00:00</span>
-      </div>
-    </div>
-  </header>
 
   <!-- ============================================================== -->
   <!-- 2. BỘ CHỌN CÔNG NGHỆ: ĐỐI ĐẦU TƯỜNG LỬA CŨ VS HỌC MÁY AI -->
@@ -394,33 +365,6 @@
       </button>
 
     </div>
-
-    <!-- CHEATSHEET NARRATION BANNER -->
-    <div id="cheatsheet-box" class="bg-gray-950/90 border-l-4 border-emerald-400 rounded-xl p-4 shadow-inner">
-      <div class="flex justify-between items-center mb-2.5">
-        <span id="cs-badge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-900 text-emerald-200">
-          BƯỚC 1: TRẠNG THÁI MẠNG LAN CÔNG TY BÌNH THƯỜNG
-        </span>
-        <span class="text-xs text-gray-400 font-mono"><i class="fa-solid fa-microphone-lines text-cyan-400 mr-1"></i> LỜI THOẠI HƯỚNG DẪN CHO SINH VIÊN BẢO VỆ</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-          <p class="text-gray-400 font-bold mb-1"><i class="fa-solid fa-eye text-blue-400 mr-1.5"></i> 1. Hiện tượng thực tế:</p>
-          <p id="cs-phenomenon" class="text-slate-200">Các máy F0, F1-1 (Kế toán), F1-2 (Nhân sự), F1-3 (Kỹ thuật) chỉ làm việc, duyệt web tin tức bình thường. Chưa có mã độc.</p>
-        </div>
-
-        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-          <p class="text-gray-400 font-bold mb-1"><i class="fa-solid fa-shield text-amber-400 mr-1.5"></i> 2. Hệ thống an ninh phân tích:</p>
-          <p id="cs-ai" class="text-slate-200">Lưu lượng phân tán tự nhiên, Idle Time ngẫu nhiên, không có cờ SYN DoS hay gói quét cổng LAN nội bộ. Toàn bộ mạng đánh giá 100% An toàn.</p>
-        </div>
-
-        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
-          <p class="text-gray-400 font-bold mb-1"><i class="fa-solid fa-comment-dots text-emerald-400 mr-1.5"></i> 3. Sinh viên nói với Thầy Cô:</p>
-          <p id="cs-speech" class="text-emerald-300 italic font-medium">"Kính thưa thầy cô, ở trạng thái bình thường, cả 4 máy trạm trong mạng nội bộ công ty đều sạch. Hệ thống hoạt động ổn định, không có cảnh báo giả."</p>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- ============================================================== -->
@@ -591,123 +535,12 @@
   <!-- 7. JAVASCRIPT CONTROLLER -->
   <!-- ============================================================== -->
   <script>
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
     let cachedFlows = [];
     let currentStep = 'normal';
     let currentEngine = 'ai';
 
-    const stepDetailsAI = {
-      'normal': {
-        badge: 'BƯỚC 1: TRẠNG THÁI MẠNG LAN CÔNG TY BÌNH THƯỜNG',
-        badgeClass: 'bg-emerald-900 text-emerald-200',
-        phenomenon: 'Các máy nhân viên gồm F0 (Kinh doanh), F1-1 (Kế toán), F1-2 (Nhân sự), F1-3 (Kỹ thuật) dùng chung mạng nội bộ và làm việc bình thường. Chưa có mã độc.',
-        ai: 'Lưu lượng phân tán tự nhiên, Idle Time ngẫu nhiên, không có cờ SYN DoS hay gói quét cổng LAN nội bộ. Toàn bộ mạng đánh giá 100% An toàn.',
-        speech: '"Kính thưa thầy cô, ở trạng thái ban đầu, cả 4 máy tính của các phòng ban trong mạng nội bộ công ty đều sạch. Mọi nhân viên làm việc và duyệt web an toàn."'
-      },
-      'f0_c2': {
-        badge: 'BƯỚC 2: TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN ĐỨNG F0 (BẢO VỆ 3 MÁY F1)',
-        badgeClass: 'bg-emerald-900 text-emerald-200 border border-emerald-600',
-        phenomenon: 'Máy F0 (Kinh Doanh) dính mã độc và gửi Heartbeat 5.0s ngầm về P0 C2 Master. 3 máy phòng ban F1 vẫn an toàn.',
-        ai: '🛡️ TƯỜNG LỬA NIDS CHẶN ĐỨNG BOTNET: Random Forest nhận diện chu kỳ 5.0s cố định và kích hoạt IPS cô lập F0 ngay lập tức tại Gateway. F0 bị chặn đứng, 3 máy F1 an toàn 100%. Chuỗi tấn công bị triệt tiêu hoàn toàn, các bước 3, 4, 5 (lây lan nội bộ và bão DoS) không thể xảy ra!',
-        speech: '"Kính thưa thầy cô, ở bản Tường lửa NIDS học máy, ngay khi máy F0 dính mã độc và gọi C2, Tường lửa AI đã nhận diện chu kỳ 5.0s bất thường và tự động cô lập F0 ngay tại Gateway. Nhờ đó, F0 bị chặn đứng hoàn toàn, không thể lây sang các máy F1 và không thể xả bão DoS. Toàn bộ chuỗi tấn công bị triệt tiêu ngay từ Bước 2, các bước 3, 4, 5 không còn cần thiết và không thể xảy ra, bảo vệ an toàn tuyệt đối 100% cho các phòng ban khác!"'
-      },
-      'spread': {
-        badge: 'BƯỚC 3: F0 LÂY LAN MÃ ĐỘC SANG 3 MÁY F1 (LATERAL MOVEMENT)',
-        badgeClass: 'bg-purple-900 text-purple-200 border border-purple-600',
-        phenomenon: 'Do dùng chung dải mạng LAN nội bộ, F0 quét mạng và phát tán mã độc sang các phòng ban khác: F1-1 (Kế toán), F1-2 (Nhân sự), F1-3 (Kỹ thuật). Cả 3 máy F1 đều bị tha hóa thành Zombie!',
-        ai: '🕷️ PHÁT HIỆN LÂY NHIỄM NỘI BỘ: AI nhận diện luồng quét cổng ngang hàng (East-West traffic) từ F0 sang dải F1. Toàn bộ các phòng ban công ty đã bị kiểm soát!',
-        speech: '"Kính thưa thầy cô, đây là cơ chế Lây lan ngang hàng (Lateral Movement). Máy F0 của nhân viên Kinh doanh đã khai thác chung mạng LAN để lây nhiễm sang máy Kế toán, Nhân sự và Kỹ thuật, tạo thành đội quân 4 Zombie!"'
-      },
-      'attack': {
-        badge: 'BƯỚC 4: TỔNG LỰC TẤN CÔNG DoS TỪ CẢ 4 ZOMBIE (F0 + 3x F1)',
-        badgeClass: 'bg-red-900 text-red-200 border border-red-600 animate-pulse',
-        phenomenon: 'P0 phát lệnh tấn công. Toàn bộ 4 máy tính Zombie của các phòng ban (F0 + F1-1 + F1-2 + F1-3) đồng loạt xả bão gói tin DoS làm tràn ngập băng thông!',
-        ai: '🚨 BÁO ĐỘNG ĐỎ TỐI ĐA: Lưu lượng bão gói SYN tăng gấp 4 lần, đe dọa đánh sập toàn bộ dịch vụ. Nguy cơ vọt lên 99%!',
-        speech: '"Kính thưa thầy cô, khi cả 4 máy tính phòng ban đồng loạt xả bão gói tin DoS theo lệnh của Hacker P0, mức độ tàn phá tăng gấp bội. AI lập tức kích hoạt Báo động Đỏ."'
-      },
-      'block_f0': {
-        badge: 'BƯỚC 5A: PHÒNG THỦ SỚM: CÔ LẬP MÁY F0 (BẢO VỆ 3 MÁY F1 AN TOÀN 100%)',
-        badgeClass: 'bg-cyan-900 text-cyan-200 border border-cyan-600',
-        phenomenon: 'Gateway đưa IP 172.28.0.20 của F0 vào danh sách đen, chặt đứt kết nối tại Gateway. Chuỗi lây lan bị dập tắt ngay từ mầm mống. 3 máy phòng ban F1 an toàn tuyệt đối!',
-        ai: 'Random Forest bắt trúng chu kỳ Heartbeat 5.0s của F0 ngay ở Bước 2 và IPS cô lập F0 ngay tại Gateway. 3 máy F1 không hề bị lây nhiễm, tiếp tục công việc bình thường.',
-        speech: '"Kính thưa thầy cô, điểm đắt giá nhất của mô hình AI NIDS là phát hiện F0 ngay từ nhịp gọi C2 đầu tiên và cô lập kịp thời. Toàn bộ 3 máy phòng ban F1 được bảo toàn an toàn 100%!"'
-      },
-      'block_all': {
-        badge: 'BƯỚC 5B: CÔ LẬP KHẨN CẤP TOÀN BỘ 4 MÁY ZOMBIE TẠI GATEWAY',
-        badgeClass: 'bg-purple-900 text-purple-200 border border-purple-600',
-        phenomenon: 'Gateway đưa cả 4 IP (172.28.0.20 -> 23) vào danh sách đen, ngắt toàn bộ lưu lượng bão DoS và cắt đứt liên lạc với P0 C2 Master. Hạ tầng mạng được giải cứu an toàn.',
-        ai: 'Cơ chế IPS phản ứng khẩn cấp: Cách ly toàn bộ 4 máy tính Zombie, khôi phục trạng thái an toàn cho toàn bộ mạng.',
-        speech: '"Kính thưa thầy cô, khi toàn bộ 4 máy đã bị biến thành Zombie và tấn công bùng phát, Gateway IPS kích hoạt cơ chế cách ly toàn diện, ngắt hoàn toàn kết nối của cả 4 Zombie để bảo vệ mạng!"'
-      }
-    };
-
-    const stepDetailsLegacy = {
-      'normal': {
-        badge: 'BƯỚC 1: TRẠNG THÁI BÌNH THƯỜNG (BẢN KHÔNG TƯỜNG LỬA)',
-        badgeClass: 'bg-slate-800 text-slate-200',
-        phenomenon: 'Các phòng ban dùng mạng bình thường. Bản không chứa tường lửa cho qua toàn bộ lưu lượng web.',
-        ai: 'Mạng không có tường lửa hay bộ lọc -> Lưu lượng đi qua tự do.',
-        speech: '"Kính thưa thầy cô, ở bản không chứa tường lửa, hệ thống mạng thông suốt nhưng hoàn toàn không có lớp giáp phòng ngự."'
-      },
-      'f0_c2': {
-        badge: 'BƯỚC 2: ⚠️ BẢN KHÔNG TƯỜNG LỬA BỎ LỌT F0 (F0 TỰ DO GỌI P0)',
-        badgeClass: 'bg-amber-950 text-amber-300 border border-amber-600',
-        phenomenon: 'Máy F0 gửi Heartbeat ngầm 52 bytes về P0. Do bản này KHÔNG CHỨA TƯỜNG LỬA, lưu lượng độc hại hoàn toàn không bị kiểm soát hay ngăn chặn!',
-        ai: '⚠️ KHÔNG CÓ TƯỜNG LỬA: F0 tự do liên lạc với P0 C2 Master và sẵn sàng lây lan sang các máy F1.',
-        speech: '"Kính thưa thầy cô, ở bản không chứa tường lửa, hệ thống hoàn toàn bất lực trước mã độc. F0 tự do kết nối P0 mà không gặp bất kỳ rào cản nào, mở đường cho đợt lây lan sang các máy khác!"'
-      },
-      'spread': {
-        badge: 'BƯỚC 3: ⚠️ BẢN KHÔNG TƯỜNG LỬA: LÂY LAN NỘI BỘ TOÀN CÔNG TY!',
-        badgeClass: 'bg-purple-950 text-purple-300 border border-purple-600',
-        phenomenon: 'F0 quét và lây sang các máy F1 cùng mạng LAN. Bản không tường lửa HOÀN TOÀN BỎ QUA luồng nội bộ LAN!',
-        ai: '⚠️ KHÔNG BẢO VỆ LAN: Toàn bộ máy tính các phòng ban bị biến thành Zombie mà hệ thống không hề phát hiện hay ngăn cản.',
-        speech: '"Kính thưa thầy cô, vì không có tường lửa bảo vệ, F0 đã lây nhiễm sang toàn bộ máy các phòng ban khác, hình thành đội quân 4 Zombie!"'
-      },
-      'attack': {
-        badge: 'BƯỚC 4: 💥 THẢM HỌA: CẢ CÔNG TY BỊ ĐÁNH SẬP BỞI 4 ZOMBIE!',
-        badgeClass: 'bg-red-900 text-red-200 border border-red-600',
-        phenomenon: 'Vì Bước 2 và Bước 3 đều không được bảo vệ, 4 máy Zombie cùng DoS đánh sập toàn bộ mạng công ty!',
-        ai: 'Bão DoS tràn ngập băng thông, toàn bộ dịch vụ công ty bị tê liệt.',
-        speech: '"Kính thưa thầy cô, hậu quả của việc không có tường lửa là để cả 4 máy phòng ban biến thành botnet đánh sập mạng. Đây là lý do sống còn phải nâng cấp lên Tường lửa NIDS AI!"'
-      },
-      'block_f0': {
-        badge: 'BƯỚC 5A: BẢN KHÔNG TƯỜNG LỬA (KHÔNG THỂ PHÒNG THỦ SỚM)',
-        badgeClass: 'bg-amber-950 text-amber-300 border border-amber-600',
-        phenomenon: 'Vì không có tường lửa NIDS, hệ thống coi lưu lượng C2 của F0 là bình thường nên không thể tự động cách ly F0 sớm.',
-        ai: 'Không có cơ chế phát hiện C2 hay IPS ngăn chặn, bỏ lỡ cơ hội bảo vệ 3 máy F1.',
-        speech: '"Ở bản không chứa tường lửa, hệ thống không có khả năng kích hoạt phòng thủ sớm."'
-      },
-      'block_all': {
-        badge: 'BƯỚC 5B: RÚT DÂY MẠNG THỦ CÔNG KHẨN CẤP',
-        badgeClass: 'bg-purple-900 text-purple-200',
-        phenomenon: 'Sau khi mạng bị đánh sập hoàn toàn, quản trị viên mới tá hỏa rút dây mạng toàn bộ các máy tính.',
-        ai: 'Chặn muộn màng sau khi toàn bộ công ty đã bị lây nhiễm và phá hoại.',
-        speech: '"Hệ thống không có tường lửa hoàn toàn bị động, chịu thiệt hại nặng nề rồi mới đi rút dây mạng thủ công."'
-      }
-    };
-
     function updateCheatsheetUI(step) {
       currentStep = step;
-      let data = (currentEngine === 'ai') ? stepDetailsAI[step] : stepDetailsLegacy[step];
-      if (!data && currentEngine === 'ai') {
-        data = stepDetailsAI['f0_c2'];
-        currentStep = 'f0_c2';
-      }
-      if (!data) return;
-
-      const badge = document.getElementById('cs-badge');
-      badge.innerText = data.badge;
-      badge.className = `px-2.5 py-0.5 rounded text-xs font-bold ${data.badgeClass}`;
-
-      document.getElementById('cs-phenomenon').innerText = data.phenomenon;
-      document.getElementById('cs-ai').innerText = data.ai;
-      document.getElementById('cs-speech').innerText = data.speech;
 
       ['btn-scen-1', 'btn-scen-2', 'btn-scen-3', 'btn-scen-4', 'btn-scen-5'].forEach(id => {
         const b = document.getElementById(id);
