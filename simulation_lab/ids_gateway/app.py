@@ -52,8 +52,12 @@ async def get_stats():
     infected_count = sum(1 for w in engine.workstations.values() if w['status'] == 'infected')
 
     if is_blocked:
-        threat = "DEFENDED (THREAT MITIGATED & ISOLATED)"
-        risk_score = 5
+        if '172.28.0.20' in engine.blocked_ips and len(engine.blocked_ips) == 1:
+            threat = "DEFENDED (PHÒNG THỦ SỚM: CÔ LẬP F0 - 3 MÁY F1 AN TOÀN)"
+            risk_score = 5
+        else:
+            threat = "DEFENDED (ĐÃ CÔ LẬP TOÀN BỘ 4 MÁY ZOMBIE TẠI GATEWAY)"
+            risk_score = 5
     elif engine.defense_engine == 'legacy':
         if recent_attack:
             threat = "CRITICAL (NGHẼN MẠNG DO BÃO GÓI)"
@@ -159,21 +163,29 @@ async def handle_scenario(request: Request):
         engine.add_log("KỊCH BẢN", "STEP-4", "Hồi 4: P0 phát lệnh tổng tấn công! Cả 4 Zombie (F0 + 3xF1) đồng loạt xả bão gói DoS!", "red")
 
     elif mode == 'block_f0':
-        # Early Defense: Block F0 (172.28.0.20)
+        # Early Defense: Block only F0 (172.28.0.20)
+        engine.blocked_ips.clear()
         engine.blocked_ips.add('172.28.0.20')
         engine.workstations['f0']['status'] = 'blocked'
-        # Disinfect F1s if they were clean
+        # Disinfect all F1s so they are 100% clean and safe
+        for b_id in ['f1_1', 'f1_2', 'f1_3']:
+            notify_workstation(b_id, 'disinfect')
+            engine.workstations[b_id]['status'] = 'clean'
         engine.stats_counter['attack_in_progress'] = False
+        engine.stats_counter['active_c2_channel'] = False
+        engine.stats_counter['active_mode'] = 'block_f0'
         engine.add_log("PHÒNG THỦ AI", "EARLY-BLOCK", "🛡️ KÍCH HOẠT PHÒNG THỦ SỚM: Đã cô lập F0 (NV Kinh Doanh - 172.28.0.20) tại Gateway! 3 máy phòng ban F1 được bảo vệ an toàn 100%.", "green")
 
     elif mode == 'block_all':
-        # Full containment: Block all 4 infected machines
+        # Full containment: Block all 4 machines
+        engine.blocked_ips.clear()
         for ip in ['172.28.0.20', '172.28.0.21', '172.28.0.22', '172.28.0.23']:
             engine.blocked_ips.add(ip)
         for b_id in ['f0', 'f1_1', 'f1_2', 'f1_3']:
             engine.workstations[b_id]['status'] = 'blocked'
         engine.stats_counter['attack_in_progress'] = False
         engine.stats_counter['active_c2_channel'] = False
+        engine.stats_counter['active_mode'] = 'block_all'
         engine.add_log("PHÒNG THỦ IPS", "CONTAINMENT", "🛑 ĐÃ CÔ LẬP TOÀN BỘ 4 MÁY ZOMBIE NỘI BỘ TẠI GATEWAY!", "purple")
 
     elif mode == 'unblock':
