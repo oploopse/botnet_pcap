@@ -53,20 +53,20 @@ async def get_stats():
 
     if is_blocked:
         if '172.28.0.20' in engine.blocked_ips and len(engine.blocked_ips) == 1:
-            threat = "DEFENDED (PHÒNG THỦ SỚM: CÔ LẬP F0 - 3 MÁY F1 AN TOÀN)"
+            threat = "DEFENDED (TƯỜNG LỬA NIDS CHẶN SỚM F0 - 3 MÁY F1 AN TOÀN 100%)"
             risk_score = 5
         else:
             threat = "DEFENDED (ĐÃ CÔ LẬP TOÀN BỘ 4 MÁY ZOMBIE TẠI GATEWAY)"
             risk_score = 5
     elif engine.defense_engine == 'legacy':
         if recent_attack:
-            threat = "CRITICAL (NGHẼN MẠNG DO BÃO GÓI)"
+            threat = "CRITICAL (KHÔNG TƯỜNG LỬA: NGHẼN MẠNG DO BÃO GÓI DoS)"
             risk_score = 98
         elif active_mode in ['f0_c2', 'spread']:
-            threat = "LOW (TƯỜNG LỬA CŨ BỎ LỌT C2 & LÂY LAN LAN)"
-            risk_score = 15
+            threat = "HIGH (BẢN KHÔNG TƯỜNG LỬA: BỎ LỌT C2 & F0 GỌI P0 TỰ DO)"
+            risk_score = 65
     else:
-        # AI NIDS Engine
+        # AI NIDS Engine (Bản chứa tường lửa)
         if recent_attack:
             threat = "CRITICAL (TẤN CÔNG TỔNG LỰC 4 ZOMBIE CONFIRMED)"
             risk_score = 99
@@ -74,8 +74,8 @@ async def get_stats():
             threat = "CRITICAL (PHÁT HIỆN LÂY NHIỄM NỘI BỘ LATERAL MOVEMENT!)"
             risk_score = 92
         elif recent_beacon or active_mode == 'f0_c2':
-            threat = "SUSPICIOUS (C2 BEACON DETECTED TỪ F0)"
-            risk_score = 72
+            threat = "DEFENDED (TƯỜNG LỬA NIDS ĐÃ CHẶN SỚM F0)"
+            risk_score = 10
         
     return {
         'total_flows': engine.stats_counter['total_flows'],
@@ -96,10 +96,24 @@ async def toggle_defense_engine(request: Request):
     data = await request.json()
     new_engine = data.get('engine', 'ai')
     engine.defense_engine = new_engine
+    active_mode = engine.stats_counter.get('active_mode', 'normal')
+
     if new_engine == 'legacy':
-        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang: 🛡️ TƯỜNG LỬA CŨ (Bỏ lọt C2 & Bỏ qua lây lan nội bộ)", "orange")
+        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang: 🌐 BẢN KHÔNG CHỨA TƯỜNG LỬA (Không phát hiện C2 & Không bảo vệ LAN)", "orange")
+        # If currently in Step 2, remove early block because there is no firewall!
+        if active_mode == 'f0_c2':
+            engine.blocked_ips.discard('172.28.0.20')
+            engine.workstations['f0']['status'] = 'infected'
+            engine.stats_counter['active_c2_channel'] = True
+            engine.add_log("KHÔNG TƯỜNG LỬA", "UNPROTECTED", "⚠️ Không có tường lửa: F0 tự do kết nối P0 C2 Master!", "orange")
     else:
-        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang: 🤖 NIDS HỌC MÁY RANDOM FOREST (Bắt trúng C2 & Lateral Spread)", "green")
+        engine.add_log("HỆ THỐNG", "CONFIG", "Đã chuyển sang: 🛡️ TƯỜNG LỬA NIDS HỌC MÁY (Phát hiện C2 & Chặn sớm F0 bảo vệ F1)", "green")
+        # If currently in Step 2, AI firewall immediately detects and blocks F0!
+        if active_mode == 'f0_c2':
+            engine.blocked_ips.add('172.28.0.20')
+            engine.workstations['f0']['status'] = 'blocked'
+            engine.stats_counter['active_c2_channel'] = False
+            engine.add_log("TƯỜNG LỬA AI", "IPS-BLOCK", "🛡️ TƯỜNG LỬA NIDS ĐÃ PHÁT HIỆN C2 TỪ F0 -> CHẶN SỚM F0! 3 máy F1 an toàn 100%.", "green")
     return {"status": "ok", "defense_engine": engine.defense_engine}
 
 @app.post("/api/control/scenario")
@@ -130,12 +144,28 @@ async def handle_scenario(request: Request):
         engine.add_log("KỊCH BẢN", "STEP-1", "Hồi 1: Toàn bộ mạng nội bộ an toàn. Cả 4 máy phòng ban F0 (Kinh Doanh), F1-1 (Kế toán), F1-2 (Nhân sự), F1-3 (Kỹ thuật) đều sạch.", "green")
 
     elif mode == 'f0_c2':
-        # F0 connects to P0 C2 Server
+        # F0 gets infected by malware and tries to call P0 C2 Server
         notify_workstation('f0', 'status', {'status': 'beaconing'})
-        engine.workstations['f0']['status'] = 'infected'
-        engine.stats_counter['active_c2_channel'] = True
         engine.stats_counter['attack_in_progress'] = False
-        engine.add_log("KỊCH BẢN", "STEP-2", "Hồi 2: F0 (NV Kinh Doanh) dính mã độc từ Internet, gửi Heartbeat 5.0s về P0 (C2 Master ngoài). 3 máy phòng ban F1 vẫn an toàn.", "orange")
+
+        if engine.defense_engine == 'ai':
+            # TƯỜNG LỬA NIDS HỌC MÁY (Bản chứa tường lửa):
+            # Tường lửa phát hiện chu kỳ 5.0s -> Chặn sớm F0 & bảo vệ 3 máy F1 an toàn!
+            engine.blocked_ips.add('172.28.0.20')
+            engine.workstations['f0']['status'] = 'blocked'
+            for b_id in ['f1_1', 'f1_2', 'f1_3']:
+                engine.workstations[b_id]['status'] = 'clean'
+            engine.stats_counter['active_c2_channel'] = False
+            engine.add_log("TƯỜNG LỬA AI", "STEP-2", "Hồi 2: F0 dính mã độc gọi C2 -> TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN SỚM F0! 3 máy F1 an toàn 100%.", "green")
+        else:
+            # BẢN KHÔNG CHỨA TƯỜNG LỬA:
+            # Không có tường lửa bảo vệ -> F0 tự do gửi Heartbeat về P0 mà không bị chặn!
+            engine.blocked_ips.discard('172.28.0.20')
+            engine.workstations['f0']['status'] = 'infected'
+            for b_id in ['f1_1', 'f1_2', 'f1_3']:
+                engine.workstations[b_id]['status'] = 'clean'
+            engine.stats_counter['active_c2_channel'] = True
+            engine.add_log("KỊCH BẢN", "STEP-2", "Hồi 2: Bản không chứa tường lửa: F0 dính mã độc và tự do gọi C2 về P0 mà không bị phát hiện hay ngăn chặn!", "orange")
 
     elif mode == 'spread':
         # Instruct P0 to issue spread command

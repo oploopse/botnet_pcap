@@ -114,21 +114,21 @@
         <p class="text-xs font-bold text-white uppercase tracking-wider flex items-center">
           CHẾ ĐỘ ĐỐI CHIẾU CÔNG NGHỆ (TECHNOLOGY COMPARISON):
         </p>
-        <p class="text-[11px] text-gray-400">So sánh khả năng phát hiện: Tường lửa cũ để lây lan cả công ty vs AI bắt gọn F0 bảo vệ 3 máy F1</p>
+        <p class="text-[11px] text-gray-400">So sánh hiệu quả: Bản không chứa tường lửa (F0 lây lan cả công ty) vs Tường lửa NIDS học máy (chặn sớm F0 ở Bước 2, bảo vệ 3 máy F1)</p>
       </div>
     </div>
     
     <div class="flex flex-wrap gap-2">
-      <!-- Button Legacy -->
+      <!-- Button No Firewall -->
       <button id="btn-engine-legacy" onclick="setDefenseEngine('legacy')" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-slate-800 text-slate-300 border-slate-700 hover:border-amber-500">
-        <span>🛡️ 1. Tường Lửa Cũ (Rule-based)</span>
-        <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">LỌT C2 & BỎ QUA LAN</span>
+        <span>🌐 1. Bản Không Chứa Tường Lửa</span>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">KHÔNG BẢO VỆ • BỎ LỌT C2</span>
       </button>
 
-      <!-- Button AI -->
+      <!-- Button AI Firewall -->
       <button id="btn-engine-ai" onclick="setDefenseEngine('ai')" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition flex items-center space-x-2 bg-emerald-950 text-emerald-200 border-emerald-500 shadow-lg ring-2 ring-emerald-400">
-        <span>🤖 2. NIDS Học Máy (Đề tài HUCE)</span>
-        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-700 text-white">TÓM F0 & BẢO VỆ F1</span>
+        <span>🛡️ 2. Tường Lửa NIDS Học Máy</span>
+        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-700 text-white">CHẶN SỚM F0 • BẢO VỆ F1</span>
       </button>
     </div>
   </div>
@@ -359,8 +359,8 @@
           <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-amber-600 text-white">BƯỚC 2</span>
           <span class="text-sm">🟡</span>
         </div>
-        <p class="text-xs font-bold text-amber-300 mt-1.5">2. F0 Gọi C2 Ngầm</p>
-        <p class="text-[10px] text-gray-300 mt-0.5">F0 dính mã độc, gửi Heartbeat về P0.</p>
+        <p class="text-xs font-bold text-amber-300 mt-1.5">2. F0 Dính Botnet (Gọi C2)</p>
+        <p class="text-[10px] text-gray-300 mt-0.5">Tường lửa phát hiện & chặn sớm F0.</p>
       </button>
 
       <!-- BƯỚC 3 -->
@@ -611,11 +611,11 @@
         speech: '"Kính thưa thầy cô, ở trạng thái ban đầu, cả 4 máy tính của các phòng ban trong mạng nội bộ công ty đều sạch. Mọi nhân viên làm việc và duyệt web an toàn."'
       },
       'f0_c2': {
-        badge: 'BƯỚC 2: F0 DÍNH MÃ ĐỘC & GỌI C2 (P0 ➔ F0 BEACONING)',
-        badgeClass: 'bg-amber-900 text-amber-200',
-        phenomenon: 'Máy nhân viên F0 (Phòng Kinh Doanh) vô tình mở file đính kèm email và dính mã độc. Định kỳ 5.0 giây, F0 gửi một gói tin Heartbeat 52 bytes lén lút về P0 C2 Master. 3 máy F1 phòng ban khác vẫn an toàn.',
-        ai: '🎯 AI TÓM GỌN KÊNH C2: Random Forest nhận diện chu kỳ máy móc 5.0s cố định và gói tin siêu nhỏ 52B từ máy F0. Nâng cờ Cảnh báo Vàng!',
-        speech: '"Kính thưa thầy cô, khi máy nhân viên F0 (Kinh Doanh) dính mã độc và gọi C2 ngầm, AI tóm gọn ngay ở Bước 2. Ở giai đoạn này, nếu bấm CHẶN SỚM F0, các máy F1 phòng ban khác sẽ được bảo vệ tuyệt đối!"'
+        badge: 'BƯỚC 2: TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN SỚM F0 (BẢO VỆ 3 MÁY F1)',
+        badgeClass: 'bg-emerald-900 text-emerald-200 border border-emerald-600',
+        phenomenon: 'Máy F0 (Kinh Doanh) dính mã độc và gửi Heartbeat 5.0s ngầm về P0 C2 Master. 3 máy phòng ban F1 vẫn an toàn.',
+        ai: '🛡️ TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN SỚM: Random Forest nhận diện chu kỳ 5.0s cố định và kích hoạt IPS cô lập F0 ngay tại Gateway. F0 bị chặn đứng, 3 máy F1 an toàn 100%!',
+        speech: '"Kính thưa thầy cô, ở bản chứa Tường lửa NIDS học máy, ngay khi máy F0 dính mã độc và gọi C2, Tường lửa AI đã nhận diện chu kỳ 5.0s bất thường và tự động chặn sớm F0. Nhờ đó, F0 bị cô lập hoàn toàn, không thể lây sang các máy F1, bảo vệ an toàn 100% cho các phòng ban khác!"'
       },
       'spread': {
         badge: 'BƯỚC 3: F0 LÂY LAN MÃ ĐỘC SANG 3 MÁY F1 (LATERAL MOVEMENT)',
@@ -649,46 +649,46 @@
 
     const stepDetailsLegacy = {
       'normal': {
-        badge: 'BƯỚC 1: TRẠNG THÁI BÌNH THƯỜNG (TƯỜNG LỬA CŨ)',
+        badge: 'BƯỚC 1: TRẠNG THÁI BÌNH THƯỜNG (BẢN KHÔNG TƯỜNG LỬA)',
         badgeClass: 'bg-slate-800 text-slate-200',
-        phenomenon: 'Các phòng ban dùng mạng bình thường. Tường lửa cũ cho qua toàn bộ lưu lượng web.',
-        ai: 'Tường lửa cũ kiểm tra Port 80 hợp lệ -> Cho qua (Allow).',
-        speech: '"Kính thưa thầy cô, ở chế độ Tường lửa cũ, hệ thống chỉ kiểm tra cổng, mọi thứ có vẻ bình thường."'
+        phenomenon: 'Các phòng ban dùng mạng bình thường. Bản không chứa tường lửa cho qua toàn bộ lưu lượng web.',
+        ai: 'Mạng không có tường lửa hay bộ lọc -> Lưu lượng đi qua tự do.',
+        speech: '"Kính thưa thầy cô, ở bản không chứa tường lửa, hệ thống mạng thông suốt nhưng hoàn toàn không có lớp giáp phòng ngự."'
       },
       'f0_c2': {
-        badge: 'BƯỚC 2: ⚠️ TƯỜNG LỬA CŨ BỎ LỌT F0 (AN TOÀN GIẢ / MISSED!)',
+        badge: 'BƯỚC 2: ⚠️ BẢN KHÔNG TƯỜNG LỬA BỎ LỌT F0 (F0 TỰ DO GỌI P0)',
         badgeClass: 'bg-amber-950 text-amber-300 border border-amber-600',
-        phenomenon: 'Máy F0 gửi Heartbeat ngầm 52 bytes về P0. Nhưng Tường lửa cũ HOÀN TOÀN MÙ, không phát hiện được!',
-        ai: '⚠️ BỎ LỌT C2: Do gói tin đi cổng hợp lệ và không có chữ ký virus, tường lửa cũ cho là duyệt web bình thường.',
-        speech: '"Kính thưa thầy cô, Tường lửa cũ bị qua mặt hoàn toàn ở Bước 2. Máy F0 ung dung nằm vùng trong mạng nội bộ công ty mà không ai hay biết!"'
+        phenomenon: 'Máy F0 gửi Heartbeat ngầm 52 bytes về P0. Do bản này KHÔNG CHỨA TƯỜNG LỬA, lưu lượng độc hại hoàn toàn không bị kiểm soát hay ngăn chặn!',
+        ai: '⚠️ KHÔNG CÓ TƯỜNG LỬA: F0 tự do liên lạc với P0 C2 Master và sẵn sàng lây lan sang các máy F1.',
+        speech: '"Kính thưa thầy cô, ở bản không chứa tường lửa, hệ thống hoàn toàn bất lực trước mã độc. F0 tự do kết nối P0 mà không gặp bất kỳ rào cản nào, mở đường cho đợt lây lan sang các máy khác!"'
       },
       'spread': {
-        badge: 'BƯỚC 3: ⚠️ TƯỜNG LỬA CŨ BỎ QUA LÂY LAN LAN NỘI BỘ!',
+        badge: 'BƯỚC 3: ⚠️ BẢN KHÔNG TƯỜNG LỬA: LÂY LAN NỘI BỘ TOÀN CÔNG TY!',
         badgeClass: 'bg-purple-950 text-purple-300 border border-purple-600',
-        phenomenon: 'F0 quét và lây sang các máy F1 cùng mạng LAN. Tường lửa cũ chỉ soi cổng ra Internet, HOÀN TOÀN BỎ QUA luồng nội bộ LAN!',
-        ai: '⚠️ BỎ QUA LAN: Toàn bộ máy tính các phòng ban bị biến thành Zombie mà hệ thống cũ không hề phát hiện hay gióng chuông.',
-        speech: '"Kính thưa thầy cô, vì tường lửa cũ không giám sát luồng ngang hàng (East-West), nên F0 đã lây nhiễm sang toàn bộ máy các phòng ban khác!"'
+        phenomenon: 'F0 quét và lây sang các máy F1 cùng mạng LAN. Bản không tường lửa HOÀN TOÀN BỎ QUA luồng nội bộ LAN!',
+        ai: '⚠️ KHÔNG BẢO VỆ LAN: Toàn bộ máy tính các phòng ban bị biến thành Zombie mà hệ thống không hề phát hiện hay ngăn cản.',
+        speech: '"Kính thưa thầy cô, vì không có tường lửa bảo vệ, F0 đã lây nhiễm sang toàn bộ máy các phòng ban khác, hình thành đội quân 4 Zombie!"'
       },
       'attack': {
         badge: 'BƯỚC 4: 💥 THẢM HỌA: CẢ CÔNG TY BỊ ĐÁNH SẬP BỞI 4 ZOMBIE!',
         badgeClass: 'bg-red-900 text-red-200 border border-red-600',
-        phenomenon: 'Vì Bước 2 và Bước 3 đều bị bỏ lọt, 4 máy Zombie cùng DoS đánh sập toàn bộ mạng công ty!',
-        ai: 'Băng thông tràn ngập, tường lửa cũ mới giật mình kêu (nhưng lúc này mạng đã bị phá hủy).',
-        speech: '"Kính thưa thầy cô, hậu quả của hệ thống cũ là để cả 4 máy phòng ban biến thành botnet đánh sập mạng. Đây là lý do sống còn phải nâng cấp lên AI!"'
+        phenomenon: 'Vì Bước 2 và Bước 3 đều không được bảo vệ, 4 máy Zombie cùng DoS đánh sập toàn bộ mạng công ty!',
+        ai: 'Bão DoS tràn ngập băng thông, toàn bộ dịch vụ công ty bị tê liệt.',
+        speech: '"Kính thưa thầy cô, hậu quả của việc không có tường lửa là để cả 4 máy phòng ban biến thành botnet đánh sập mạng. Đây là lý do sống còn phải nâng cấp lên Tường lửa NIDS AI!"'
       },
       'block_f0': {
-        badge: 'BƯỚC 5A: TƯỜNG LỬA CŨ BỎ LỌT F0 (KHÔNG THỂ PHÒNG THỦ SỚM)',
+        badge: 'BƯỚC 5A: BẢN KHÔNG TƯỜNG LỬA (KHÔNG THỂ PHÒNG THỦ SỚM)',
         badgeClass: 'bg-amber-950 text-amber-300 border border-amber-600',
-        phenomenon: 'Vì không có AI, tường lửa cũ coi lưu lượng C2 của F0 là duyệt web bình thường nên không thể tự động cách ly F0 sớm.',
-        ai: 'Tường lửa cũ không phát hiện được nhịp Heartbeat 5.0s, bỏ lỡ thời cơ vàng để bảo vệ 3 máy F1.',
-        speech: '"Ở hệ thống cũ, tường lửa hoàn toàn mù trước tín hiệu C2 của F0 nên không có khả năng kích hoạt phòng thủ sớm."'
+        phenomenon: 'Vì không có tường lửa NIDS, hệ thống coi lưu lượng C2 của F0 là bình thường nên không thể tự động cách ly F0 sớm.',
+        ai: 'Không có cơ chế phát hiện C2 hay IPS ngăn chặn, bỏ lỡ cơ hội bảo vệ 3 máy F1.',
+        speech: '"Ở bản không chứa tường lửa, hệ thống không có khả năng kích hoạt phòng thủ sớm."'
       },
       'block_all': {
-        badge: 'BƯỚC 5B: RÚT DÂY MẠNG KHẨN CẤP (MẤT BÒ MỚI LO LÀM CHUỒNG)',
+        badge: 'BƯỚC 5B: RÚT DÂY MẠNG THỦ CÔNG KHẨN CẤP',
         badgeClass: 'bg-purple-900 text-purple-200',
         phenomenon: 'Sau khi mạng bị đánh sập hoàn toàn, quản trị viên mới tá hỏa rút dây mạng toàn bộ các máy tính.',
         ai: 'Chặn muộn màng sau khi toàn bộ công ty đã bị lây nhiễm và phá hoại.',
-        speech: '"Hệ thống cũ hoàn toàn bị động, chịu thiệt hại nặng nề rồi mới đi rút dây mạng thủ công."'
+        speech: '"Hệ thống không có tường lửa hoàn toàn bị động, chịu thiệt hại nặng nề rồi mới đi rút dây mạng thủ công."'
       }
     };
 
@@ -950,22 +950,44 @@
         f1_3Sub = 'Bị F0 lây qua LAN';
 
       } else if (mode === 'f0_c2') {
-        // Step 2: Only F0 has C2 Beaconing; F1s are 100% clean
-        f0State = 'infected';
-        f0Title = '🔴 DÍNH BOTNET (C2)';
-        f0Sub = 'Heartbeat 5.0s về P0';
+        // Step 2:
+        if (!isLegacy) {
+          // TƯỜNG LỬA NIDS HỌC MÁY (Bản chứa tường lửa):
+          // Tường lửa phát hiện và chặn sớm F0, bảo vệ 3 máy F1 an toàn 100%!
+          f0State = 'blocked';
+          f0Title = '🚫 ĐÃ CÔ LẬP';
+          f0Sub = 'Tường lửa chặn sớm';
 
-        f1_1State = 'clean';
-        f1_1Title = '🟢 SẠCH (AN TOÀN)';
-        f1_1Sub = 'Duyệt hóa đơn/web';
+          f1_1State = 'clean';
+          f1_1Title = '🟢 SẠCH (AN TOÀN)';
+          f1_1Sub = '🛡️ Được bảo vệ 100%';
 
-        f1_2State = 'clean';
-        f1_2Title = '🟢 SẠCH (AN TOÀN)';
-        f1_2Sub = 'Quản lý hồ sơ nhân sự';
+          f1_2State = 'clean';
+          f1_2Title = '🟢 SẠCH (AN TOÀN)';
+          f1_2Sub = '🛡️ Được bảo vệ 100%';
 
-        f1_3State = 'clean';
-        f1_3Title = '🟢 SẠCH (AN TOÀN)';
-        f1_3Sub = 'Lập trình/dev nội bộ';
+          f1_3State = 'clean';
+          f1_3Title = '🟢 SẠCH (AN TOÀN)';
+          f1_3Sub = '🛡️ Được bảo vệ 100%';
+        } else {
+          // BẢN KHÔNG CHỨA TƯỜNG LỬA:
+          // Không có tường lửa bảo vệ -> F0 dính botnet và gọi P0 tự do!
+          f0State = 'infected';
+          f0Title = '🔴 DÍNH BOTNET (C2)';
+          f0Sub = 'Heartbeat 5.0s về P0';
+
+          f1_1State = 'clean';
+          f1_1Title = '🟢 SẠCH (TẠM THỜI)';
+          f1_1Sub = 'Nguy cơ bị lây lan';
+
+          f1_2State = 'clean';
+          f1_2Title = '🟢 SẠCH (TẠM THỜI)';
+          f1_2Sub = 'Nguy cơ bị lây lan';
+
+          f1_3State = 'clean';
+          f1_3Title = '🟢 SẠCH (TẠM THỜI)';
+          f1_3Sub = 'Nguy cơ bị lây lan';
+        }
 
       } else {
         // Normal (Step 1 or clean)
@@ -983,16 +1005,16 @@
 
       // 3. Update Gateway & P0 text
       if (isLegacy) {
-        setSvgText(gwTitle, "TƯỜNG LỬA CŨ (RULE-BASED)");
+        setSvgText(gwTitle, "BẢN KHÔNG CHỨA TƯỜNG LỬA");
         gwTitle.setAttribute('fill', '#94a3b8');
         gwCard.setAttribute('stroke', '#64748b');
       } else {
-        setSvgText(gwTitle, "CỔNG AN NINH AI NIDS");
+        setSvgText(gwTitle, "TƯỜNG LỬA NIDS HỌC MÁY");
         gwTitle.setAttribute('fill', '#34d399');
         gwCard.setAttribute('stroke', '#10b981');
       }
 
-      const zombies = (mode === 'normal' || isEarlyBlock || isFullBlock) ? 0 : (mode === 'f0_c2' ? 1 : 4);
+      const zombies = (mode === 'normal' || isEarlyBlock || isFullBlock || (mode === 'f0_c2' && !isLegacy)) ? 0 : (mode === 'f0_c2' ? 1 : 4);
       setSvgText(gwZombieCount, `${zombies} / 4 máy`);
       gwZombieCount.setAttribute('fill', zombies > 0 ? '#ef4444' : '#34d399');
       setSvgText(p0BotCount, `${zombies} Bot`);
@@ -1093,39 +1115,71 @@
         wireF1_3.className.baseVal = 'flow-spread';
 
         topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-purple-950 text-purple-300 border border-purple-700';
-        topoBadge.innerHTML = isLegacy ? '⚠️ TƯỜNG LỬA CŨ BỎ QUA LÂY LAN NỘI BỘ (F0 ➔ 3x F1)' : '🕷️ CẢNH BÁO: AI PHÁT HIỆN LÂY NHIỄM NỘI BỘ LATERAL SPREAD!';
+        topoBadge.innerHTML = isLegacy ? '⚠️ BẢN KHÔNG TƯỜNG LỬA: BỎ QUA LÂY LAN NỘI BỘ (F0 ➔ 3x F1)' : '🕷️ CẢNH BÁO: TƯỜNG LỬA AI PHÁT HIỆN LÂY NHIỄM NỘI BỘ!';
 
-        setSvgText(gwDecision, isLegacy ? 'TƯỜNG LỬA: BỎ QUA LUỒNG NỘI BỘ LAN' : 'AI: PHÁT HIỆN LÂY NHIỄM LAN NGANG HÀNG');
+        setSvgText(gwDecision, isLegacy ? 'KHÔNG CÓ TƯỜNG LỬA: BỎ QUA LUỒNG LAN' : 'TƯỜNG LỬA AI: PHÁT HIỆN LÂY NHIỄM LAN');
         gwDecision.setAttribute('fill', isLegacy ? '#94a3b8' : '#c084fc');
         setSvgText(gwDecisionSub, 'F0 đang quét và lây lan sang các máy F1');
         setSvgText(p0CmdVal, 'SPREAD');
         p0CmdVal.setAttribute('fill', '#ef4444');
 
       } else if (mode === 'f0_c2') {
-        blockInd.style.display = 'none';
-        if (blockF0Ind) blockF0Ind.style.display = 'none';
+        if (!isLegacy) {
+          // TƯỜNG LỬA NIDS HỌC MÁY (Bản chứa tường lửa):
+          // Tường lửa phát hiện và chặn sớm F0, bảo vệ 3 máy F1 an toàn 100%!
+          blockInd.style.display = 'none';
+          if (blockF0Ind) blockF0Ind.style.display = 'block';
 
-        if (wireF0Gw) wireF0Gw.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
-        if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-normal';
-        if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-normal';
-        if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-normal';
+          if (wireF0Gw) wireF0Gw.className.baseVal = 'flow-idle';
+          if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-normal';
+          if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-normal';
+          if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-normal';
 
-        wireLanGw.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
-        wireGwC2.className.baseVal = isLegacy ? 'flow-missed' : 'flow-beacon';
-        wireGwWeb.className.baseVal = 'flow-normal';
+          wireLanGw.className.baseVal = 'flow-normal';
+          wireGwC2.className.baseVal = 'flow-idle';
+          wireGwWeb.className.baseVal = 'flow-normal';
 
-        wireF1_1.className.baseVal = 'flow-idle';
-        wireF1_2.className.baseVal = 'flow-idle';
-        wireF1_3.className.baseVal = 'flow-idle';
+          wireF1_1.className.baseVal = 'flow-idle';
+          wireF1_2.className.baseVal = 'flow-idle';
+          wireF1_3.className.baseVal = 'flow-idle';
 
-        topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-300 border border-amber-700';
-        topoBadge.innerHTML = isLegacy ? '⚠️ TƯỜNG LỬA CŨ BỎ LỌT C2: F0 TỰ DO GỌI P0' : '🎯 AI PHÁT HIỆN: F0 GỬI C2 BEACONING ĐỊNH KỲ 5.0s!';
+          topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-700';
+          topoBadge.innerHTML = '🛡️ TƯỜNG LỬA NIDS: ĐÃ PHÁT HIỆN & CHẶN SỚM F0 (3 MÁY F1 AN TOÀN 100%)';
 
-        setSvgText(gwDecision, isLegacy ? 'TƯỜNG LỬA: CHO QUA GÓI TIN 52B' : 'AI: PHÁT HIỆN C2 BEACON TỪ F0');
-        gwDecision.setAttribute('fill', isLegacy ? '#94a3b8' : '#ef4444');
-        setSvgText(gwDecisionSub, 'Chu kỳ 5.0s cố định, gói siêu nhỏ 52B');
-        setSvgText(p0CmdVal, 'SLEEP (1 BOT)');
-        p0CmdVal.setAttribute('fill', '#ef4444');
+          setSvgText(gwDecision, 'TƯỜNG LỬA AI: ĐÃ CHẶN SỚM F0 • BẢO VỆ 3 MÁY F1');
+          gwDecision.setAttribute('fill', '#34d399');
+          setSvgText(gwDecisionSub, 'Phát hiện Heartbeat 5.0s, tự động kích hoạt IPS cô lập F0');
+          setSvgText(p0CmdVal, 'MẤT KẾT NỐI F0');
+          p0CmdVal.setAttribute('fill', '#ef4444');
+
+        } else {
+          // BẢN KHÔNG CHỨA TƯỜNG LỬA:
+          // Không có tường lửa -> Bỏ lọt C2, F0 tự do kết nối P0!
+          blockInd.style.display = 'none';
+          if (blockF0Ind) blockF0Ind.style.display = 'none';
+
+          if (wireF0Gw) wireF0Gw.className.baseVal = 'flow-missed';
+          if (wireF1_1Gw) wireF1_1Gw.className.baseVal = 'flow-normal';
+          if (wireF1_2Gw) wireF1_2Gw.className.baseVal = 'flow-normal';
+          if (wireF1_3Gw) wireF1_3Gw.className.baseVal = 'flow-normal';
+
+          wireLanGw.className.baseVal = 'flow-missed';
+          wireGwC2.className.baseVal = 'flow-missed';
+          wireGwWeb.className.baseVal = 'flow-normal';
+
+          wireF1_1.className.baseVal = 'flow-idle';
+          wireF1_2.className.baseVal = 'flow-idle';
+          wireF1_3.className.baseVal = 'flow-idle';
+
+          topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-300 border border-amber-700';
+          topoBadge.innerHTML = '⚠️ BẢN KHÔNG TƯỜNG LỬA: BỎ LỌT C2 • F0 TỰ DO KẾT NỐI P0';
+
+          setSvgText(gwDecision, 'KHÔNG CÓ TƯỜNG LỬA: CHO QUA TỰ DO');
+          gwDecision.setAttribute('fill', '#94a3b8');
+          setSvgText(gwDecisionSub, 'F0 tự do gửi Heartbeat 52B về P0 C2 Master');
+          setSvgText(p0CmdVal, 'SLEEP (1 BOT)');
+          p0CmdVal.setAttribute('fill', '#ef4444');
+        }
 
       } else {
         // Normal
@@ -1148,7 +1202,7 @@
         topoBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-700';
         topoBadge.innerHTML = '🟢 Mạng Nội bộ Công ty: An toàn (4 máy sạch)';
 
-        setSvgText(gwDecision, isLegacy ? 'TƯỜNG LỬA: GIÁM SÁT CỔNG MẠNG' : 'CHẾ ĐỘ: GIÁM SÁT THỜI GIAN THỰC');
+        setSvgText(gwDecision, isLegacy ? 'BẢN KHÔNG CÓ TƯỜNG LỬA BẢO VỆ' : 'TƯỜNG LỬA NIDS: GIÁM SÁT THỜI GIAN THỰC');
         gwDecision.setAttribute('fill', '#34d399');
         setSvgText(gwDecisionSub, 'Thuật toán ML tự động phân loại từng luồng');
         setSvgText(p0CmdVal, 'SLEEP (Chờ)');

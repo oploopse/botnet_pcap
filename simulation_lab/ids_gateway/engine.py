@@ -112,18 +112,18 @@ def classify_network_flow(src_ip, dst_ip, port, duration_us, fwd_pkts, bwd_pkts,
         stats_counter['botnet_flows'] += 1
         
         if defense_engine == 'legacy':
-            tag = "BỎ LỌT (TƯỜNG LỬA BỎ QUA NỘI BỘ)"
+            tag = "BỎ QUA (KHÔNG CÓ TƯỜNG LỬA LAN)"
             color = "slate"
             is_botnet = 0
-            explanation = f"⚠️ TƯỜNG LỬA CŨ BỎ QUA NỘI BỘ: Tường lửa biên chỉ soi cổng Internet, KHÔNG GIÁM SÁT luồng LAN ngang hàng (East-West traffic). F0 ({src_ip}) tự do quét và lây lan sang {dst_ip} mà không bị ngăn chặn!"
-            add_log("TƯỜNG LỬA CŨ", "MISSED", f"Bỏ qua luồng lây lan nội bộ từ {src_ip} sang {dst_ip} (Không có AI soi LAN)", "orange")
+            explanation = f"⚠️ BẢN KHÔNG CHỨA TƯỜNG LỬA: Không có hệ thống giám sát hay tường lửa bảo vệ LAN. F0 ({src_ip}) tự do quét và lây lan sang {dst_ip} mà không bị phát hiện hay ngăn chặn!"
+            add_log("KHÔNG TƯỜNG LỬA", "MISSED", f"Bỏ qua luồng lây lan nội bộ từ {src_ip} sang {dst_ip} (Không có tường lửa)", "orange")
         else:
             tag = "LÂY NHIỄM NỘI BỘ (LATERAL SPREAD)"
             color = "purple"
             stats_counter['active_c2_channel'] = True
             stats_counter['current_threat_level'] = 'CRITICAL'
-            explanation = f"🕷️ PHÁT HIỆN LÂY NHIỄM NỘI BỘ (LATERAL MOVEMENT): F0 ({src_ip}) đang phát tán mã độc sâu mạng (Worm Exploit) sang máy đồng nghiệp {dst_ip} trong cùng mạng LAN công ty!"
-            add_log("GATEWAY-AI", "ALERT-PURPLE", f"PHÁT HIỆN LÂY NHIỄM NỘI BỘ: {src_ip} -> {dst_ip} (Độ tin cậy: {confidence}%)", "purple")
+            explanation = f"🕷️ PHÁT HIỆN LÂY NHIỄM NỘI BỘ (LATERAL MOVEMENT): Tường lửa AI nhận diện F0 ({src_ip}) đang phát tán mã độc sang máy đồng nghiệp {dst_ip} trong cùng mạng LAN công ty!"
+            add_log("TƯỜNG LỬA AI", "ALERT-PURPLE", f"PHÁT HIỆN LÂY NHIỄM NỘI BỘ: {src_ip} -> {dst_ip} (Độ tin cậy: {confidence}%)", "purple")
 
     elif flow_type_hint == 'attack':
         last_attack_time = now_t
@@ -138,38 +138,38 @@ def classify_network_flow(src_ip, dst_ip, port, duration_us, fwd_pkts, bwd_pkts,
         if defense_engine == 'legacy':
             tag = "TẤN CÔNG (NGHẼN MẠNG BÃO GÓI)"
             color = "red"
-            explanation = f"Bão gói SYN tràn ngập làm nghẽn băng thông ({duration_ms}ms). Tường lửa cũ gióng chuông báo động nhưng lúc này hệ thống đã bị tấn công bùng phát!"
-            add_log("TƯỜNG LỬA CŨ", "ALERT-RED", f"BÁO ĐỘNG: Nghẽn mạng do bão gói tin từ {bot_name} ({src_ip})!", "red")
+            explanation = f"Bão gói SYN tràn ngập làm nghẽn băng thông ({duration_ms}ms). Bản không chứa tường lửa không có cơ chế chặn lọc, toàn bộ hệ thống bị tê liệt!"
+            add_log("KHÔNG TƯỜNG LỬA", "ALERT-RED", f"BÁO ĐỘNG: Nghẽn mạng do bão gói tin DoS từ {bot_name} ({src_ip})!", "red")
         else:
             tag = "BOTNET ATTACK (SCAN/FLOOD)"
             color = "red"
-            explanation = f"Bão gói SYN quét dồn dập (SYN={syn_count}, Chu kỳ siêu nhanh 40ms, Thời lượng {duration_ms}ms). AI xác định đợt tấn công từ Zombie {bot_name} ({src_ip})!"
-            add_log("GATEWAY-AI", "ALERT-RED", f"PHÁT HIỆN TẤN CÔNG BOTNET từ {bot_name} ({src_ip}) -> Cổng {port} (Độ tin cậy: {confidence}%)", "red")
+            explanation = f"Bão gói SYN quét dồn dập (SYN={syn_count}, Chu kỳ siêu nhanh 40ms, Thời lượng {duration_ms}ms). Tường lửa AI xác định đợt tấn công từ Zombie {bot_name} ({src_ip})!"
+            add_log("TƯỜNG LỬA AI", "ALERT-RED", f"PHÁT HIỆN TẤN CÔNG BOTNET từ {bot_name} ({src_ip}) -> Cổng {port} (Độ tin cậy: {confidence}%)", "red")
 
     elif flow_type_hint == 'c2_beacon':
         last_beacon_time = now_t
         bot_name = workstations.get(ip_to_bot.get(src_ip, ''), {}).get('name', src_ip)
         
         if defense_engine == 'legacy':
-            # LEGACY FIREWALL FAILS TO DETECT!
-            tag = "BỎ LỌT (TƯỜNG LỬA CŨ CHO QUA)"
+            # UNPROTECTED - NO FIREWALL
+            tag = "BỎ LỌT (KHÔNG CÓ TƯỜNG LỬA)"
             color = "slate"
             is_botnet = 0
             confidence = 96.0
-            explanation = f"⚠️ TƯỜNG LỬA CŨ BỎ SÓT: Chỉ kiểm tra Port {port} và chữ ký virus. Do gói tin C2 từ {bot_name} chỉ có {fwd_bytes}B hợp lệ HTTP và không chứa mã virus, tường lửa ĐÁNH GIÁ AN TOÀN VÀ CHO QUA!"
-            add_log("TƯỜNG LỬA CŨ", "PASSED", f"Cho qua gói tin C2 52B từ {bot_name} -> P0 (Tưởng duyệt web bình thường)", "orange")
+            explanation = f"⚠️ BẢN KHÔNG CHỨA TƯỜNG LỬA: Hệ thống không trang bị tường lửa hay mô hình AI phát hiện. Do đó, gói tin C2 từ {bot_name} ({src_ip}) truyền tự do ra Internet đến P0 C2 Master mà không bị ngăn chặn!"
+            add_log("KHÔNG TƯỜNG LỬA", "PASSED", f"Cho qua gói tin C2 52B từ {bot_name} -> P0 (Không có tường lửa)", "orange")
         else:
-            # SMART AI NIDS DETECTS!
-            tag = "BOTNET C2 BEACONING"
+            # SMART AI NIDS FIREWALL DETECTS & BLOCKS EARLY!
+            tag = "BOTNET C2 (ĐÃ CHẶN SỚM F0)"
             color = "orange"
             is_botnet = 1
-            stats_counter['active_c2_channel'] = True
+            stats_counter['active_c2_channel'] = False
             if not stats_counter['attack_in_progress']:
-                stats_counter['current_threat_level'] = 'SUSPICIOUS'
+                stats_counter['current_threat_level'] = 'DEFENDED'
             stats_counter['botnet_flows'] += 1
             confidence = max(confidence, 86.5)
-            explanation = f"🎯 AI TÓM GỌN KÊNH C2: Random Forest nhận diện chu kỳ nghỉ máy móc đúng {idle_s}s cố định và kích thước {fwd_bytes}B bất biến từ {bot_name} ({src_ip}). Bắt trúng kênh điều khiển P0 C2 Master!"
-            add_log("GATEWAY-AI", "ALERT-AMBER", f"AI phát hiện C2 Beaconing định kỳ 5.0s từ {bot_name} -> P0 (Độ tin cậy: {confidence}%)", "orange")
+            explanation = f"🛡️ TƯỜNG LỬA NIDS PHÁT HIỆN & CHẶN SỚM: Random Forest bắt trúng chu kỳ {idle_s}s cố định và gói {fwd_bytes}B từ {bot_name} ({src_ip}). Tự động kích hoạt IPS cô lập F0 ngay lập tức, bảo vệ 3 máy F1 an toàn 100%!"
+            add_log("TƯỜNG LỬA AI", "ALERT-AMBER", f"Tường lửa AI phát hiện C2 từ {bot_name} -> Tự động chặn sớm F0 bảo vệ 3 máy F1! (Độ tin cậy: {confidence}%)", "green")
             
     else:
         tag = "NORMAL (SAFE)"
