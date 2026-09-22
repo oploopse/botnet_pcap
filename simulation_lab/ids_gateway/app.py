@@ -138,6 +138,13 @@ async def handle_scenario(request: Request):
         engine.add_log("KỊCH BẢN", "STEP-2", "Hồi 2: F0 (NV Kinh Doanh) dính mã độc từ Internet, gửi Heartbeat 5.0s về P0 (C2 Master ngoài). 3 máy phòng ban F1 vẫn an toàn.", "orange")
 
     elif mode == 'spread':
+        # Instruct P0 to issue spread command
+        try:
+            req = urllib.request.Request("http://c2-server:8443/api/command", data=json.dumps({"command": "spread"}).encode('utf-8'), headers={'Content-Type': 'application/json'})
+            urllib.request.urlopen(req, timeout=2)
+        except Exception:
+            pass
+
         # F0 initiates lateral movement to infect F1-1, F1-2, F1-3
         notify_workstation('f0', 'spread')
         # Mark all as infected in gateway
